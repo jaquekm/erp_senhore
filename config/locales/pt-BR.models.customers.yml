@@ -1,0 +1,17 @@
+---
+pt-BR:
+  activerecord:
+    models:
+      customer:
+        one: Cliente
+        other: Clientes
+        created: Cliente Criado
+        updated: Cliente Editado
+        deleted: Cliente Deletado
+    attributes:
+      customer:
+        name: Nome
+        email: Email
+        phone: Telefone Fixo
+        cellphone: Celular
+        cpf: CPF

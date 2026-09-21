@@ -1,0 +1,51 @@
+<%- model_class = PurchaseProduct -%>
+<div class="section-header">
+  <div class="page-header">
+    <h1><%= t('activerecord.models.purchase_product.other') %></h1>
+  </div>
+</div>
+
+<div class="section-body">
+
+  <%= link_to t('.new', :default => t("helpers.links.new")), new_purchase_product_path, :class => 'btn btn-primary mb-3' %>
+  <% link_to t('.new', :default => t("helpers.links.new-purchase")), new_purchase_path, :class => 'btn btn-primary mb-3' %>
+  <% link_to t('.inventory', :default => t("helpers.links.inventory")), inventory_view_path, :class => 'btn btn-primary mb-3' %>
+
+  <div class="card">
+    <div class="card-body">
+      <%= turbo_frame_tag :purchase_products do %>
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+            <tr>
+              <th><%= model_class.human_attribute_name(:product_id) %></th>
+              <th><%= model_class.human_attribute_name(t(:custom_id)) %></th>
+              <th><%= model_class.human_attribute_name(t(:quantity)) %></th>
+              <th><%= model_class.human_attribute_name(t(:name)) %></th>
+              <th><%= model_class.human_attribute_name(t(:created_at)) %></th>
+              <th><%= t '.actions', :default => t("helpers.actions") %></th>
+            </tr>
+            </thead>
+            <tbody>
+            <% @purchase_products.each do |purchase_product| %>
+              <%= tag.tr id: dom_id(purchase_product) do %>
+                <td><%= link_to purchase_product.id, product_path(purchase_product.product), data: { toggle: 'tooltip', turbo: false } %></td>
+                <td><%= purchase_product.try(:custom_id) %></td>
+                <td><%= purchase_product.quantity %></td>
+                <td><%= purchase_product.try(:name) %></td>
+                <td><%= df(purchase_product.created_at) %></td>
+                <td>
+                  <%= link_to icon('fas fa-pencil-alt'), edit_purchase_product_path(purchase_product), title: t('edit'), class: 'btn btn-primary', data: { toggle: 'tooltip', turbo: false } %>
+                  <%= link_to icon('fas fa-eye'), purchase_product, title: t('show'), class: 'btn btn-info', data: { toggle: 'tooltip', turbo: false } %>
+                  <%= link_to icon('fas fa-trash'), purchase_product, title: t('destroy'), class: 'btn btn-danger', method: :delete, data: { toggle: 'tooltip', turbo: true, turbo_method: :delete, turbo_confirm: t('confirm') } %>
+                </td>
+              <% end %>
+            <% end %>
+            </tbody>
+          </table>
+          <%== pagy_bootstrap_nav(@pagy) %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

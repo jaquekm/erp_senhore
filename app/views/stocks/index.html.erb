@@ -1,0 +1,228 @@
+<%- model_class = Stock -%>
+<div class="section-header">
+  <div class="d-flex justify-content-between align-items-center w-100">
+    <div class="d-flex align-items-center">
+      <h1 class="me-3"><%= t('stocks.two') %></h1>
+    </div>
+    <div class="d-flex gap-2">
+      <%= button_to stocks_path(format: "csv"), 
+          class: "btn btn-success", 
+          method: :get do %>
+        Gerar Previsão de Venda
+      <% end %>
+      <%= link_to null_stock_details_stocks_path, 
+          class: "btn btn-primary", 
+          data: { turbo: false } do %>
+        <i class="fas fa-list"></i> Contagem de Estoque
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<div class="form-group mb-3">
+  <%= form_with(url: stocks_path, method: :get, class: "row g-3 align-items-end") do %>
+    <div class="col-md-2">
+      <%= select_tag "status", 
+          options_for_select([['Situação', ''], ['Ativo', 1], ['Inativo', 0]], @default_status_filter),
+          class: "form-select" %>
+    </div>
+    
+    <div class="col-md-2">
+      <%= select_tag "balance_situation", 
+          options_for_select([['Saldo total', ''], ['Maior do que zero', 1], ['Igual a zero', 0], ['Menor do que zero', -1]], @default_situation_balance_filter),
+          class: "form-select" %>
+    </div>
+    
+    <div class="col-md-2">
+      <%= select_tag "period", 
+          options_for_select([['30 dias', '30'], ['15 dias', '15'], ['7 dias', '7']], @default_period_filter),
+          class: "form-select" %>
+    </div>
+
+    <div class="col-md-2">
+      <%= select_tag "tipo_estoque", 
+          options_for_select([
+            ['Tipo Null', 'null'],
+            ['Tipo V', 'V'],
+            ['Tipo P', 'P'],
+            ['Todos', 'all']
+          ], @default_tipo_estoque),
+          class: "form-select" %>
+    </div>
+    
+    <div class="col-md-2">
+      <%= text_field_tag "sku", @default_sku_filter, 
+          placeholder: "Filtrar por SKU",
+          class: "form-control" %>
+    </div>
+    
+    <div class="col-md-2">
+      <%= submit_tag "Filtro", class: 'btn btn-primary w-100' %>
+    </div>
+  <% end %>
+</div>
+
+<div class="section-body">
+  <div class="card">
+    <div class="card-body">
+      <%= turbo_frame_tag :stocks do %>
+        <div class="table-responsive">
+          <table id="stockTable" class="table table-striped">
+            <thead>
+            <tr>
+              <th>Apply Discount</th>
+              <th><%= model_class.human_attribute_name(:id) %></th>
+              <th><%= t('stocks.sku') %></th>
+              <th><%= t('stocks.balance') %></th>
+              <th><%= t('stocks.in_production') %></th>
+              <th>Quantidade vendida dos últimos <%= params[:period] || '30' %> dias</th>
+              <th>Previsão para os próximos <%= params[:period] || '30' %> dias</th>
+              <th><%= t('stocks.number_of_rolls') %></th>
+              <th><%= t('stocks.product') %></th>
+              <th><%= t '.actions', :default => t("helpers.actions") %></th>
+            </tr>
+            </thead>
+            <tbody>
+            <% @stocks_with_data.each do |(stock, data)| %>
+              <% sao_paulo_base = stock.balances.find { |b| b.deposit_id.to_s == '9023657532' } %>
+              <tr>
+                <td>
+                  <% if sao_paulo_base && !stock.product.composed? %>
+                    <%= check_box_tag "discount_#{stock.id}_#{sao_paulo_base.deposit_id}", 1, 
+                        stock.discounted_warehouse_sku_id == "#{sao_paulo_base.deposit_id}_#{stock.product.sku}", 
+                        class: 'discount-checkbox',
+                        data: { 
+                          stock_id: stock.id,
+                          warehouse_id: sao_paulo_base.deposit_id,
+                          sku: stock.product.sku,
+                          initial_state: stock.discounted_warehouse_sku_id == "#{sao_paulo_base.deposit_id}_#{stock.product.sku}"
+                        } %>
+                  <% end %>
+                </td>
+                <td><%= link_to stock.id, stock_path(stock), data: { toggle: 'tooltip', turbo: false } %></td>
+                <td><%= stock.product.sku %></td>
+                <td class="balance-cell" data-physical="<%= data[:physical_balance] %>" data-discounted="<%= data[:discounted_physical_balance] %>">
+                  <%= stock.discounted_warehouse_sku_id ? data[:discounted_physical_balance] : data[:physical_balance] %>
+                </td>
+                <td class="in-production"><%= data[:total_in_production] %></td>
+                <td><%= data[:total_sold] %></td>
+                <td class="forecast"><%= stock.product.composed? ? 'N/A' : data[:total_forecast] %></td>
+                <td class="number-of-rolls">
+                  <%= stock.product.composed? ? 'N/A' : (data[:total_forecast].to_f / (stock.product.number_of_pieces_per_fabric_roll || 1)).ceil %>
+                </td>
+                <td>
+                  <%= stock.product.name %>
+                  <% if stock.product.composed? %>
+                    <span class="badge bg-info">Composto</span>
+                  <% end %>
+                </td>
+                <td>
+                  <%= link_to icon('fas fa-eye'), stock, title: t('show'), class: 'btn btn-info', data: { toggle: 'tooltip', turbo: false } %>
+                </td>
+              </tr>
+            <% end %>
+            </tbody>
+          </table>
+          <%== pagy_bootstrap_nav(@pagy) %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<%= javascript_tag do %>
+  document.addEventListener('turbo:load', function() {
+    setupDiscountCheckboxes();
+  });
+
+  document.addEventListener('turbo:render', function() {
+    setupDiscountCheckboxes();
+  });
+
+  function setupDiscountCheckboxes() {
+    const checkboxes = document.querySelectorAll('.discount-checkbox');
+    checkboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', function() {
+        const isApplying = this.checked;
+        updateViewImmediately(this, isApplying);
+        updateServerState(this, isApplying);
+      });
+    });
+  }
+
+  function updateViewImmediately(checkbox, isApplying) {
+    const row = checkbox.closest('tr');
+    const balanceCell = row.querySelector('.balance-cell');
+    const forecastCell = row.querySelector('.forecast');
+    const numberOfRollsCell = row.querySelector('.number-of-rolls');
+    const inProductionCell = row.querySelector('.in-production');
+    const totalSoldCell = row.cells[5]; // Assuming total sold is in the 6th column
+
+    const physicalBalance = parseInt(balanceCell.dataset.physical);
+    const discountedBalance = parseInt(balanceCell.dataset.discounted);
+    const inProduction = parseInt(inProductionCell.textContent);
+    const totalSold = parseInt(totalSoldCell.textContent);
+    const numberOfPiecesPerRoll = parseInt(numberOfRollsCell.dataset.piecesPerRoll) || 1;
+
+    const newBalance = isApplying ? discountedBalance : physicalBalance;
+    const adjustedBalance = newBalance + inProduction;
+    const newForecast = Math.max(totalSold - adjustedBalance, 0);
+    const newNumberOfRolls = Math.ceil(newForecast / numberOfPiecesPerRoll);
+
+    balanceCell.textContent = newBalance;
+    forecastCell.textContent = newForecast;
+    numberOfRollsCell.textContent = newNumberOfRolls;
+  }
+
+  function updateServerState(checkbox, isApplying) {
+    const row = checkbox.closest('tr');
+    const stockId = checkbox.dataset.stockId;
+    const warehouseId = checkbox.dataset.warehouseId;
+    const sku = checkbox.dataset.sku;
+    const balanceCell = row.querySelector('.balance-cell');
+    const forecastCell = row.querySelector('.forecast');
+    const numberOfRollsCell = row.querySelector('.number-of-rolls');
+
+    fetch(`/stocks/${stockId}/apply_discount`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+      },
+      body: JSON.stringify({ 
+        warehouse_id: warehouseId, 
+        sku: sku, 
+        is_applying: isApplying
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        console.log('Discount applied successfully');
+        // Update with server values if they differ from our calculation
+        if (isApplying && data.discounted_physical_balance !== balanceCell.textContent) {
+          balanceCell.textContent = data.discounted_physical_balance;
+        } else if (!isApplying && data.physical_balance !== balanceCell.textContent) {
+          balanceCell.textContent = data.physical_balance;
+        }
+        if (data.new_forecast !== forecastCell.textContent) {
+          forecastCell.textContent = data.new_forecast;
+          const numberOfPiecesPerRoll = data.number_of_pieces_per_fabric_roll || 1;
+          const newNumberOfRolls = Math.ceil(data.new_forecast / numberOfPiecesPerRoll);
+          numberOfRollsCell.textContent = newNumberOfRolls;
+        }
+      } else {
+        console.error('Error applying discount:', data.error);
+        // Revert changes
+        checkbox.checked = !isApplying;
+        updateViewImmediately(checkbox, !isApplying);
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      // Revert changes
+      checkbox.checked = !isApplying;
+      updateViewImmediately(checkbox, !isApplying);
+    });
+  }
+<% end %>

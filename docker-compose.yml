@@ -1,0 +1,32 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - database
+      - redis
+    ports:
+      - "3000:3000"
+    env_file: .env
+    environment:
+      CONFIG: test
+      DEPLOY_DATABASE: true
+      PERFORM_TESTS: true
+      START_APP: true
+    volumes:
+      - ./log:/app/log
+
+  database:
+    image: postgres:13
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: postgres
+
+  redis:
+    image: "redis:7.0.2"
+    ports:
+      - "6379:6379"
+volumes:
+  db_data:

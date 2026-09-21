@@ -1,0 +1,104 @@
+<div class="container mt-5">
+  <h1 class="mb-4">Histórico de Vendas</h1>
+
+  <!-- Last 15 Days Overview -->
+  <div class="card mb-5">
+    <div class="card-body">
+      <h2 class="card-title mb-4">Resumo dos Últimos 15 Dias</h2>
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <div class="card bg-light">
+            <div class="card-body">
+              <h5 class="card-title">Total de Pedidos</h5>
+              <p class="card-text display-4"><%= @sum_last_days %></p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 mb-3">
+          <div class="card bg-light">
+            <div class="card-body">
+              <h5 class="card-title">Média Diária de Pedidos</h5>
+              <p class="card-text display-4"><%= @average_last_days %></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mt-4">
+        <canvas id="chartjs-bar" height="300"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Date Range Search -->
+  <div class="card mb-5">
+    <div class="card-body">
+      <h2 class="card-title mb-4">Pesquisar por Período</h2>
+      <%= form_tag(bling_order_item_histories_path, method: :get, class: 'row g-3') do %>
+        <div class="col-md-3">
+          <%= label_tag 'bling_order[initial_date]', 'Data Inicial', class: 'form-label' %>
+          <%= date_field_tag 'bling_order[initial_date]', @initial_date, class: 'form-control' %>
+        </div>
+        <div class="col-md-3">
+          <%= label_tag 'bling_order[final_date]', 'Data Final', class: 'form-label' %>
+          <%= date_field_tag 'bling_order[final_date]', @final_date, class: 'form-control' %>
+        </div>
+        <div class="col-md-6 d-flex align-items-end">
+          <%= button_tag 'Pesquisar', class: 'btn btn-primary me-2', id: 'daily-revenue-search',
+                         data: { turbo_frame: 'daily-revenue-chart' } %>
+          <%= button_tag 'Mês Atual', type: 'button', class: 'btn btn-secondary me-2', id: 'current-month-button' %>
+          <%= button_tag 'Hoje', type: 'button', class: 'btn btn-secondary', id: 'today-button' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Revenue Statistics -->
+  <div class="row mb-5">
+    <div class="col-md-4 mb-3">
+      <div class="card bg-success text-white">
+        <div class="card-body">
+          <h5 class="card-title">Faturamento</h5>
+          <p class="card-text display-5"><%= number_to_currency(@revenue_paid, unit: "R$", separator: ",", delimiter: ".") %></p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-3">
+      <div class="card bg-info text-white">
+        <div class="card-body">
+          <h5 class="card-title">Vendas</h5>
+          <p class="card-text display-5"><%= @quantity_paid %></p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-3">
+      <div class="card bg-warning text-dark">
+        <div class="card-body">
+          <h5 class="card-title">Ticket Médio</h5>
+          <p class="card-text display-5"><%= number_to_currency(@average_ticket.round(2), unit: "R$", separator: ",", delimiter: ".") %></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Daily Revenue Chart -->
+  <div class="card mb-5">
+    <div class="card-body">
+      <h2 class="card-title mb-4">Faturamento Diário</h2>
+      <%= hidden_field_tag('daily_revenue', @daily_revenue) %>
+      <div style="height: 400px; width: 100%;">
+        <canvas id='chartjs-bar-daily-revenue'></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Canceled Orders Chart -->
+  <div class="card mb-5">
+    <div class="card-body">
+      <h2 class="card-title mb-4">Custo de Oportunidade dos Pedidos Cancelados</h2>
+      <%= hidden_field_tag('canceled_revenue', @canceled_revenue) %>
+      <div style="height: 400px; width: 100%;">
+        <canvas id='canceled-revenue-chart'></canvas>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,121 @@
+<%#= javascript_include_tag "grid_table", "data-turbo-track": "reload", defer: true %>
+<%- model_class = Product -%>
+<div class="section-header">
+  <div class="page-header">
+    <h1><%= t '.title', :default => t(model_class.model_name.human.pluralize.titleize) %></h1>
+  </div>
+</div>
+
+<div class="section-body">
+  <%= form_tag products_path, method: :get, class: 'mb-3' do %>
+    <div class="input-group">
+      <%= text_field_tag :search, params[:search], class: 'form-control', placeholder: 'Search by name or SKU' %>
+      <div class="input-group-append">
+        <%= submit_tag "Search", class: "btn btn-primary" %>
+      </div>
+    </div>
+  <% end %>
+
+  <%= link_to t('.new', :default => t("helpers.links.new")), new_product_path, :class => 'btn btn-primary mb-3' %>
+  <%= link_to icon('fas fa-camera') + ' Scan QR Code', qr_scanner_path, class: 'btn btn-info mb-3 ml-2' %>
+
+  <div class="card">
+    <div class="card-body">
+      <%= turbo_frame_tag :products do %>
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+            <tr>
+              <th><%= model_class.human_attribute_name(:image) %></th>
+              <th><%= model_class.human_attribute_name(t(:name)) %></th>
+              <th><%= t('activerecord.attributes.product.sku') %></th>
+              <th><%= model_class.human_attribute_name(t(:custom_id)) %></th>
+              <th><%= model_class.human_attribute_name(t(:price)) %></th>
+              <th><%= t('activerecord.attributes.product.count_purchase_product') %></th>
+              <th><%= t('activerecord.attributes.product.count_sale_product') %></th>
+              <th><%= t('activerecord.attributes.product.balance') %></th>
+              <th><%= t('activerecord.attributes.product.category') %></th>
+              <th><%= model_class.human_attribute_name(t(:active)) %></th>
+              <th><%= t '.actions', :default => t("helpers.actions") %></th>
+            </tr>
+            </thead>
+            <tbody>
+            <% @products.each do |product| %>
+              <%= tag.tr id: dom_id(product) do %>
+                <td><%= link_to (product.image.attached? ? image_tag(rails_blob_path(product.image.variant(:thumb)), class: "thumb-image #{'thumb-image-mobile' if (platform.mobile? || platform.mobile_app?) }") : image_tag('products/product-5-50.png', size: '50', class: "thumb-image #{'thumb-image-mobile' if (platform.mobile? || platform.mobile_app?) }" )), product_path(product), data: { toggle: 'tooltip', turbo: false } %></td>
+                <td><%= product.name %></td>
+                <td>
+                  <%= product.sku %>
+                  <%= image_tag Services::Product::GenerateQrCode.new(product: product).call, 
+                                size: '100', 
+                                onclick: "showQrCode(#{product.id}, '#{product.decorate.sku}')", 
+                                style: "cursor: pointer" %>
+                </td>
+                <td><%= product.custom_id %></td>
+                <td><%= number_to_currency_pt_br(product.price) %></td>
+                <td><%= Services::Product::CountQuantity.call(product: product, product_command: 'purchase_product') %></td>
+                <td><%= Services::Product::CountQuantity.call(product: product, product_command: 'sale_product') %></td>
+                <td><%= Services::Product::CountQuantity.call(product: product, product_command: 'balance_product') %></td>
+                <td><%= product.category.try(:name) %></td>
+                <td><%= raw display_status(product.active) %></td>
+                <td>
+                  <%= link_to icon('fas fa-pencil-alt'), edit_product_path(product), title: t('edit'), class: 'btn btn-primary', data: { toggle: 'tooltip', turbo: false } %>
+                  <%= link_to icon('fas fa-eye'), product, title: t('show'), class: 'btn btn-info', data: { toggle: 'tooltip', turbo: false } %>
+                  <%= link_to icon('fas fa-clone'), meeting_duplicate_path(product), title: t('duplicate'), class: 'btn btn-warning', data: { toggle: 'tooltip', turbo: false } %>
+                  <%= link_to icon('fas fa-sync'), update_product_active_path(product), title: t('update_active'), class: 'btn btn-success', data: { toggle: 'tooltip', turbo: false } %>
+                  <button onclick="showQrCode(<%= product.id %>, '<%= product.decorate.sku %>')" class="btn btn-info btn-sm">
+                    <i class="fas fa-qrcode"></i>
+                  </button>
+                  <% link_to icon('fas fa-trash'), destroy_from_index_product_path(product), title: t('destroy'), class: 'btn btn-danger', method: :delete, data: { toggle: 'tooltip', turbo: true, turbo_method: :delete, turbo_confirm: t('confirm') } %>
+                </td>
+              <% end %>
+            <% end %>
+            </tbody>
+          </table>
+          <%== pagy_bootstrap_nav(@pagy, link_extra: "data-turbo-frame='products'") %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<!-- Add this modal at the end of the file -->
+<div class="modal fade" id="qrCodeModal" tabindex="-1" role="dialog" aria-labelledby="qrCodeModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="qrCodeModalLabel">Product QR Code</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body text-center">
+        <div id="qrCodeImage"></div>
+        <div class="mt-2">
+          <h5 class="text-muted">SKU</h5>
+          <h4 id="qrCodeSku" class="font-weight-bold"></h4>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <a id="downloadQrCode" href="#" class="btn btn-primary">
+          <i class="fas fa-download"></i> Download QR Code
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function showQrCode(productId, sku) {
+    fetch(`/products/${productId}/qr_code`)
+      .then(response => response.text())
+      .then(qrCodeUrl => {
+        document.getElementById('qrCodeImage').innerHTML = `<img src="${qrCodeUrl}" alt="QR Code">`;
+        document.getElementById('qrCodeSku').textContent = sku;
+        document.getElementById('downloadQrCode').href = `/products/${productId}/download_qr_code`;
+        $('#qrCodeModal').modal('show');
+      })
+      .catch(error => console.error('Error:', error));
+  }
+</script>

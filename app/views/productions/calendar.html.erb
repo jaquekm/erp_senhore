@@ -1,0 +1,156 @@
+<br><br>
+<h1 class="mb-4"><%= t('productions.calendar') %></h1>
+
+<div class="card">
+  <div class="card-body">
+    <%= month_calendar(events: @productions, attribute: :calendar_date) do |date, productions| %>
+      <div class="calendar-date"><%= date.day %></div>
+
+      <% productions.each do |production| %>
+        <div class="production-item <%= production.confirmed ? 'confirmed' : 'unconfirmed' %>">
+          <%= link_to production_path(production), class: "production-link", title: "View details" do %>
+            <strong><%= production.service_order_number %></strong>
+            <div class="production-details">
+              <small><%= production.tailor.name %></small>
+              <small><%= production.production_products.sum(:quantity) %> pcs</small>
+              <% if production.confirmed %>
+                <span class="badge badge-success">Entregue</span>
+                <% if production.payment_date %>
+                  <% if production.payment_date < Date.today %>
+                    <span class="badge badge-danger">Pagamento Atrasado</span>
+                  <% else %>
+                    <span class="badge badge-info">Pagamento em Espera</span>
+                  <% end %>
+                <% end %>
+              <% else %>
+                <span class="badge badge-orange">Não Entregue</span>
+                <% if production.expected_delivery_date %>
+                  <% if production.expected_delivery_date < Date.today %>
+                    <span class="badge badge-danger">Entrega Atrasada</span>
+                  <% else %>
+                    <span class="badge badge-info">Entrega em Dia</span>
+                  <% end %>
+                <% else %>
+                  <span class="badge badge-secondary">Sem Data de Entrega</span>
+                <% end %>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</div>
+
+<style>
+  .simple-calendar {
+    font-size: 1.1em;
+  }
+
+  .simple-calendar .day { 
+    height: 120px; 
+  }
+
+  .simple-calendar .wday-0 { background-color: #f8d7da; }
+  .simple-calendar .wday-6 { background-color: #f8d7da; }
+  .simple-calendar .today { background-color: #e8f4f8; }
+  .simple-calendar .past { opacity: 0.6; }
+  .simple-calendar .future { }
+  .simple-calendar .start-date { }
+  .simple-calendar .prev-month { background-color: #f0f0f0; }
+  .simple-calendar .next-month { background-color: #f0f0f0; }
+  .simple-calendar .current-month { }
+  .simple-calendar .has-events { }
+
+  .calendar-heading {
+    font-size: 1.3em;
+    margin-bottom: 15px;
+  }
+
+  .calendar-heading a,
+  .calendar-heading .calendar-title {
+    padding: 10px 15px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    color: #495057;
+    text-decoration: none;
+    transition: background-color 0.2s;
+  }
+
+  .calendar-heading a:hover,
+  .calendar-heading .calendar-title:hover {
+    background-color: #e9ecef;
+  }
+
+  .calendar-date {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 8px;
+  }
+
+  .production-item {
+    margin-bottom: 6px;
+    padding: 4px;
+    border-radius: 3px;
+    font-size: 0.9em;
+  }
+
+  .production-link {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .production-details {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.95em;
+  }
+
+  .confirmed {
+    background-color: #d4edda;
+  }
+
+  .unconfirmed {
+    background-color: #fff3cd;
+  }
+
+  .badge {
+    font-size: 0.8em;
+    padding: 3px 6px;
+    margin-top: 2px;
+  }
+
+  .badge-danger {
+    background-color: #dc3545;
+    color: white;
+  }
+
+  .badge-info {
+    background-color: #17a2b8;
+    color: white;
+  }
+
+  .badge-secondary {
+    background-color: #6c757d;
+    color: white;
+  }
+
+  .badge-orange {
+    background-color: #fd7e14;
+    color: white;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Translate calendar navigation buttons
+    var prevButton = document.querySelector('.calendar-heading a:first-child');
+    var nextButton = document.querySelector('.calendar-heading a:last-child');
+    var todayButton = document.querySelector('.calendar-heading .calendar-title');
+
+    if (prevButton) prevButton.textContent = '<%= t('productions.previous') %>';
+    if (nextButton) nextButton.textContent = '<%= t('productions.next') %>';
+    if (todayButton) todayButton.textContent = '<%= t('productions.today') %>';
+  });
+</script>

@@ -1,0 +1,99 @@
+<div class="container-fluid mt-4">
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="mb-0">Dashboard</h1>
+        <div>
+          <% if @token_expires_at.present? && @token_expires_at > Time.current %>
+            <span class="badge bg-success">Token válido até <%= pt_datetime_format(@token_expires_at) %></span>
+          <% else %>
+            <a href="https://www.bling.com.br/OAuth2/views/authorization.php?response_type=code&client_id=<%= ENV['CLIENT_ID']%>&state=323eb862289daff1f11ee6c23edb4f6e&scopes=98308+98309+98310+98313+98314+98565+98619+101584+507943+575904+5990556+6631498+106168710+182224097+199272829+200802821+220621674+318257547+318257550+318257553+318257556+318257559+318257561+318257565+318257568+318257570+318257573+318257576+318257583+333936575+363921589+363921590+363921591+363921592+363921598+363921599+363953167+363953556+363953706+791588404+875116881+875116885+1649295804+1780272711+1869535257+5862218180+6239411327+6239420709+13645012976+13645012997+13645012998" class="btn btn-danger btn-sm" target="_blank">
+              Atualizar Token
+            </a>
+          <% end %>
+        </div>
+      </div>
+      <p class="text-muted">Última Atualização: <%= @last_update %></p>
+    </div>
+  </div>
+
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-light">
+      <h3 class="mb-0">Filtrar por data</h3>
+    </div>
+    <div class="card-body">
+      <%= form_with(url: root_path, method: :get, class: 'row g-3 align-items-end') do %>
+        <div class="col-md-4">
+          <%= label_tag :initial_date, 'Data Inicial', class: 'form-label' %>
+          <%= date_field_tag('initial_date', @default_initial_date, class: 'form-control') %>
+        </div>
+        <div class="col-md-4">
+          <%= label_tag :final_date, 'Data Final', class: 'form-label' %>
+          <%= date_field_tag(:final_date, @default_final_date, class: 'form-control') %>
+        </div>
+        <div class="col-md-2">
+          <%= submit_tag "Filtrar", class: 'btn btn-primary w-100' %>
+        </div>
+        <div class="col-md-2">
+          <%= link_to 'Filtrar hoje', root_path, class: 'btn btn-outline-secondary w-100' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4 mb-4">
+    <% order_sections = [
+      { title: "Pedidos Em andamento (Pagos)", items: @grouped_in_progress_order_items, status: BlingOrderItemStatus::IN_PROGRESS, color: "primary", highlighted: true },
+      { title: "Pedidos Impressos", items: @grouped_printed_order_items, status: BlingOrderItemStatus::PRINTED, color: "info" },
+      { title: "Pedidos Pendentes", items: @grouped_pending_order_items, status: BlingOrderItemStatus::PENDING, color: "warning" },
+      { title: "Pedidos Atendidos", items: @grouped_fulfilled_order_items, status: BlingOrderItemStatus::FULFILLED, color: "success" },
+      { title: "Pedidos Feitos (checados e verificados)", items: @current_done_order_items, color: "secondary" },
+      { title: "Pedidos Coletados", items: @collected_orders, color: "dark" },
+      { title: "Pedidos com erro", items: @grouped_error_order_items, status: BlingOrderItemStatus::ERROR, color: "danger" }
+    ] %>
+
+    <% order_sections.each do |section| %>
+      <div class="col">
+        <div class="card h-100 shadow-sm">
+          <div class="card-header bg-<%= section[:color] %> text-white">
+            <h3 class="mb-0"><%= section[:title] %></h3>
+          </div>
+          <div class="card-body">
+            <% if section[:status].present? %>
+              <%= render 'order_items_with_filters', order_items: section[:items],
+                        show_revenue_estimation: false, highlighted: section[:highlighted], status: section[:status] %>
+            <% else %>
+              <%= render 'order_items', order_items: section[:items], show_revenue_estimation: false, highlighted: section[:highlighted] %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const toggleButton = document.getElementById('toggle-visibility');
+    const eyeIcon = document.getElementById('eye-icon');
+    const hiddenElements = document.querySelectorAll('.revenue-hidden');
+
+    toggleButton.addEventListener('click', function() {
+      hiddenElements.forEach(el => el.classList.toggle('text-hide'));
+      eyeIcon.classList.toggle('fa-eye');
+      eyeIcon.classList.toggle('fa-eye-slash');
+    });
+  });
+
+  setInterval(function() {
+    window.location.reload();
+  }, 60000);
+</script>
+
+<style>
+  .text-hide {
+    color: transparent;
+    text-shadow: 0 0 10px rgba(0,0,0,0.5);
+    user-select: none;
+  }
+</style>

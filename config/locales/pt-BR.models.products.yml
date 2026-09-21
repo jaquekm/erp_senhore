@@ -1,0 +1,52 @@
+---
+pt-BR:
+  activerecord:
+    models:
+      product:
+        one: "Produto"
+        other: "Produtos"
+    attributes:
+      product:
+        name: Nome
+        price: Preço
+        sku: SKU
+        entry: Entrada
+        count_purchase_product: Entrada
+        exit: Saída
+        count_sale_product: Saída
+        balance: Saldo
+        qr_code: QR code
+        image: Imagem
+        highlight: Destaque
+        category: Categoria
+        active: Ativo
+        bling:
+          true: Sim
+          false: Não
+        custom_id: ID do Cliente
+        purchase_products: Entrada de estoque
+        sale_products: Saída de estoque
+    errors:
+      models:
+        product:
+          attributes:
+            purchase_products:
+              invalid: Existe entrada de estoque associada a este produto
+            sale_products:
+              invalid: Existe saída de estoque associada a este produto
+
+  products:
+    one: Produto
+    two: Produtos
+    name: Nome
+    sku: SKU
+    price: Preço
+    price_with_currency: Preço R$
+    entry: Entrada
+    exit: Saída
+    balance: Saldo
+    qr_code: QR code
+    image: Imagem
+    highlight: Destaque
+    category: Categoria
+    active: Ativo

@@ -1,0 +1,104 @@
+---
+pt-BR:
+  categories: 
+    one: Categoria
+    two: Categorias
+    list: Lista de Categorias
+    create: Criar Categoria
+  products:
+    one: Produto
+    two: Produtos
+    list: Lista de Produtos
+    create: Criar Produto
+  productions:
+    one: Produção
+    two: Produções
+    side_missing_pieces: "Peças Faltantes"
+    list: Lista de Produções
+    create: Criar Produção
+    products_in_production_report: "Produtos em Produção"
+    price_per_piece_report: "Preço por Peça"
+    calendar: "Calendário de Produções"
+    previous: "Anterior"
+    today: "Hoje"
+    next: "Próximo"
+  tailors:
+    one: Costureiro
+    two: Costureiros
+    list: Lista de Costureiros
+    create: Criar Costureiro
+  suppliers:
+    one: Fornecedor
+    two: Fornecedores
+    list: Lista de Fornecedores
+    create: Criar Fornecedor
+  entries:
+    one: Entrada
+    two: Entradas
+    list: Lista de Entradas
+    create: Criar Entrada
+  exits:
+    one: Saída
+    two: Saídas
+    list: Lista de Saídas
+    create: Criar Saída
+  sales:
+    one: Venda
+    two: Vendas
+    list: Lista de Vendas
+    create: Criar Vendas
+    checkout: Checkout Pedidos
+  customers:
+    one: Cliente
+    two: Clientes
+    list: Lista de Clientes
+    create: Criar Clientes
+  audits:
+    one: Relatório
+    two: Relatórios
+    products: Controle dos Pedidos
+    pendings: Produtos Faltantes
+    finance: Financeiro Shein
+    daily: Relatório Diário de Vendas
+    top_selling_products: Produtos Mais Vendidos
+    pending_product_planning: Planejamento de Produtos Pendentes
+  dashboards:
+    title: Painel
+    one: Dashboard Principal
+    two: Pedidos Shein
+    three: Pedidos Shein/Bling
+    second_title: Shein
+    revenue_target_report: "Relatório de Metas de Receita"
+    status_summary: "Resumo de Status"
+  reports:
+    title: "Relatórios"
+  warehouses:
+    two: Armazéns
+    list: Lista de Armazéns
+    create: Criar Armazém
+  stores:
+    two: Lojas
+    list: Lista de Lojas
+    create: Criar Loja
+  stocks:
+    shopping_suggestion: Sugestão de Compra
+    null_stock_details: Contagem de Estoque
+  uploads:
+    one: Upload
+    shein_orders: Upload de Pedidos Shein
+    finance: Upload de Dados Financeiros
+  activerecord:
+    models:
+      revenue_estimations:
+        other: Estimativas de Receita
+      bling_order_items:
+        list: Lista de Itens de Pedido Bling
+  bling_module_situations:
+    one: Situação
+    two: Situações Bling
+    list: Lista de Situações
+    create: Criar Situação
+  qr_code:
+    title: "QR Code"
+    generate: "Gerar QR Codes"
+    scan: "Escanear QR Code"

@@ -1,0 +1,72 @@
+<%= render 'layouts/flash' %>
+
+<section class="main-content">
+  <div class="row">
+    <div class="col-md-12">
+      <h1 class="display-4"><%= @product.name %></h1>
+      <hr>
+      <table>
+        <tr class="row">
+          <td><%= @product.image.attached? ? image_tag(rails_blob_path(@product.image), size: 300) : image_tag('products/product-5-50.png', size: '300') %></td>
+          <td>
+            <% if platform.desktop? %>
+              <%= image_tag Services::Product::GenerateQrCode.new(product: @product).call %>
+              <div class="text-center mt-2">
+                <small class="text-muted">SKU</small><br>
+                <strong><%= @product.decorate.sku %></strong>
+              </div>
+            <% end %>
+          </td>
+          <td class="mt-md-5">
+            <table>
+              <tr>
+                <th class="col"><%= t('activerecord.attributes.product.custom_id') %></th>
+                <td class="col"><%= @product.custom_id %></td>
+              </tr>
+              <tr>
+                <th class="col"><%= t('activerecord.attributes.product.sku') %></th>
+                <td class="col"><%= @product.decorate.sku %></td>
+              </tr>
+              <tr>
+                <th class="col"><%= t('products.price_with_currency') %></th>
+                <td class="col-12"><%= number_to_currency @product.price, unit: '' %></td>
+              </tr>
+              <tr>
+                <th class="col"><%= t('products.entry') %></th>
+                <td class="col"><%= Services::Product::CountQuantity.call(product: @product, product_command: 'purchase_product') %></td>
+              </tr>
+              <tr>
+                <th class="col"><%= t('products.exit') %></th>
+                <td class="col"><%= Services::Product::CountQuantity.call(product: @product, product_command: 'sale_product') %></td>
+              </tr>
+              <tr>
+                <th class="col"><%= t('products.balance') %></th>
+                <td class="col"><%= Services::Product::CountQuantity.call(product: @product, product_command: 'balance_product') %></td>
+              </tr>
+              <tr>
+                <th class="col"><%= t('products.highlight') %></th>
+                <td class="col"><%= @product.highlight %></td>
+              </tr>
+              <tr>
+                <th class="col"><%= t('products.category') %></th>
+                <td class="col"><%= @product.category.try(:name) %></td>
+              </tr>
+              <tr>
+                <th class="col"><%= t('products.active') %>:</th>
+                <td class="col"><%= @product.active %></td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+      <%= link_to t('helpers.links.back'), products_path, class: 'btn btn-primary btn-lg' %>
+      <%= link_to t('.edit', :default => t("helpers.links.edit")),
+                  edit_product_path(@product), :class => 'btn btn-dark btn-lg' %>
+      <%= link_to t('.destroy', :default => t("helpers.links.destroy")),
+                  product_path(@product),
+                  title: t('destroy'), class: 'btn btn-danger btn-lg',
+                  method: :delete,
+                  data: { toggle: 'tooltip', turbo: true, turbo_method: :delete, turbo_confirm: t('confirm') } %>
+    </div>
+  </div>
+</section>

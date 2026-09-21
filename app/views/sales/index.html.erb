@@ -1,0 +1,58 @@
+<%- model_class = Sale -%>
+<div class="section-header">
+  <div class="page-header">
+    <h1><%= t '.title', :default => t(model_class.model_name.human.pluralize.titleize) %></h1>
+  </div>
+</div>
+
+<div class="section-body">
+
+  <%= link_to t('sales.links.integrate_orders'), insert_orders_path, :class => 'btn btn-primary' %>
+  <%= link_to t('.new', :default => t("helpers.links.new")), new_sale_path, :class => 'btn btn-primary' %>
+
+  <div class="card">
+    <div class="card-body">
+      <%= turbo_frame_tag :sales do %>
+        <div class="table-responsive">
+          <table id="stockTable" class="table table-striped">
+            <thead>
+            <tr>
+              <th><%= model_class.human_attribute_name(:id) %></th>
+              <th><%= model_class.human_attribute_name(t(:name)) %></th>
+              <th><%= model_class.human_attribute_name(:discount) %></th>
+              <th><%= model_class.human_attribute_name(t(:online)) %></th>
+              <th><%= model_class.human_attribute_name(t(:order_code)) %></th>
+              <th><%= model_class.human_attribute_name(:value) %></th>
+              <th><%= model_class.human_attribute_name(:disclosure) %></th>
+              <th><%= model_class.human_attribute_name(:exchange) %></th>
+              <th><%= model_class.human_attribute_name(t(:created_at)) %></th>
+              <th><%= t '.actions', :default => t("helpers.actions") %></th>
+            </tr>
+            </thead>
+            <tbody>
+            <% @sales.each do |sale| %>
+              <%= tag.tr id: dom_id(sale) do %>
+                <td><%= link_to sale.id, sale_path(sale) %></td>
+                <td><%= sale.try(:name) %></td>
+                <td><%= sale.discount %></td>
+                <td><%= sale.online %></td>
+                <td><%= sale.order_code %></td>
+                <td><%= sale.value %></td>
+                <td><%= sale.disclosure %></td>
+                <td><%= sale.exchange %></td>
+                <td><%= df(sale.created_at) %></td>
+                <td>
+                  <%= link_to icon('fas fa-pencil-alt'), edit_sale_path(sale), title: t('edit'), class: 'btn btn-primary', data: { toggle: 'tooltip', turbo: false } %>
+                  <%= link_to icon('fas fa-eye'), sale, title: t('show'), class: 'btn btn-info', data: { toggle: 'tooltip', turbo: false } %>
+                  <%= link_to icon('fas fa-trash'), sale, title: t('destroy'), class: 'btn btn-danger', method: :delete, data: { toggle: 'tooltip', turbo: true, turbo_method: :delete, turbo_confirm: t('confirm') } %>
+                </td>
+              <% end %>
+            <% end %>
+            </tbody>
+          </table>
+          <%== pagy_bootstrap_nav(@pagy) %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

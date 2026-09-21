@@ -1,0 +1,33 @@
+<%= render 'layouts/flash' %>
+
+<div class="page-header">
+  <h1><%=t '.title', :default => 'Inventário de estoque'%></h1>
+</div>
+
+<%= form_with url: save_inventory_path do |form| %>
+  <div class="row">
+    <div class="form-group">
+      <%= form.label t(:product_id), :class => 'control-label col-md-2' %>
+      <div class="col-md-10">
+        <%= form.select :product_id, Product.where(account_id: current_user.account.id).order(:custom_id).collect {|p| [ "#{p.name} - #{number_to_currency p.price}", p.id ] }, { :include_blank => 'Selecione um Produto'}, :class => "form-control form-control-sm" %>
+      </div>
+    </div>
+    <div class="form-group">
+      <%= form.label 'Quantidade', :class => 'control-label col-md-1' %>
+      <div class="col-md-11">
+        <%= form.number_field :quantity, in: 1..100000, step: 1, class: 'form-control', autocomplete: "email", placeholder: "Adicionar ao estoque"  %>
+      </div>
+    </div>
+    <% if account_policy_enabled? %>
+      <div class="form-group">
+        <%= form.label 'Loja Destino', :class => 'control-label col-md-11' %>
+        <div class="col-md-11">
+          <%= select("inventory", "destiny", Sale.store_sales.keys.to_a , {},{ include_blank: true, class: 'form-control form-control-sm' }) %>
+        </div>
+      </div>
+    <% end %>
+    <div class="col-md-10">
+      <%= submit_tag("Salvar Inventário", :class => "btn btn-primary") %>
+    </div>
+  </div>
+<% end %>

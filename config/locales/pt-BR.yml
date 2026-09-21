@@ -1,0 +1,364 @@
+---
+pt-BR:
+  flash:
+    success:
+      update: "%{model} atualizado!"
+    failure:
+      update: "%{model} não pode ser atualizado!"
+  language_name: "Português"
+  select_idiom: "Selecione um idioma"
+  name: Nome
+  price: Preço
+  created_at: Data de criação
+  custom_id: Código do produto
+  cellphone: Celular
+  phone: Telefone Fixo
+  sale_id: Código da venda
+  Categories: Categorias
+  Category: Categoria
+  Purchase Products: Entradas de Estoque
+  Purchase Product: Entrada de Estoque
+  Revenue Estimations: Estimativas da Receita
+  Revenue Estimation: Estimativa da Receita
+  Sale Products: Saídas de Estoque
+  Sale Product: Saída de Estoque
+  Product: Produto
+  Products: Produtos
+  Sale: Venda
+  Sales: Vendas
+  Tailor: Costureiro
+  Tailors: Costureiros
+  Production: Produção
+  Productions: Produções
+  Customers: Clientes
+  Customer: Cliente
+  category_id: Categoria
+  customer_id: Nome do Cliente
+  active: Ativo
+  quantity: Quantidade
+  value: Valor
+  product_id: Produto
+  store_entrance: Local Entrada
+  discount: Desconto em R$
+  order_code: Código Pedido
+  percentage: Porcentagem
+  total_exchange_value: Valor troca
+  show: 'Visualizar'
+  new: 'Novo'
+  edit: 'Editar'
+  destroy: 'Apagar'
+  duplicate: 'Duplicar'
+  update_active: 'Atualizar Ativação'
+  confirm: 'Você tem certeza?'
+  back: 'Voltar'
+  action: 'Ações'
+  save: 'Salvar'
+  active_status:
+    active: 'Ativo'
+    inactive: 'Inativo'
+  activerecord:
+    attributes:
+      production_product:
+        dirty: "Sujo"
+        error: "Erro"
+        discard: "Descarte"
+      production:
+        notions_cost: "Custo de Aviamentos"
+        fabric_cost: "Custo de Tecido"
+        # Remove the total_material_cost line
+    models:
+      bling_module_situation: "Situação do Módulo Bling"
+    attributes:
+      bling_module_situation:
+        module_id: "ID do Módulo"
+        situation_id: "ID da Situação"
+        name: "Nome"
+        inherited_id: "ID Herdado"
+        color: "Cor"
+  actions:
+    remove_product: "Remover Produto"
+  errors:
+    messages:
+      record_invalid: 'A validação falhou: %{errors}'
+      restrict_dependent_destroy:
+        has_one: Não é possível excluir o registro pois existe um %{record} dependente
+        has_many: Não é possível excluir o registro pois existem %{record} dependentes
+  date:
+    abbr_day_names:
+    - dom
+    - seg
+    - ter
+    - qua
+    - qui
+    - sex
+    - sáb
+    abbr_month_names:
+    - 
+    - jan
+    - fev
+    - mar
+    - abr
+    - mai
+    - jun
+    - jul
+    - ago
+    - set
+    - out
+    - nov
+    - dez
+    day_names:
+    - domingo
+    - segunda-feira
+    - terça-feira
+    - quarta-feira
+    - quinta-feira
+    - sexta-feira
+    - sábado
+    formats:
+      default: "%d/%m/%Y"
+      long: "%d de %B de %Y"
+      short: "%d de %B"
+    month_names:
+    - 
+    - janeiro
+    - fevereiro
+    - março
+    - abril
+    - maio
+    - junho
+    - julho
+    - agosto
+    - setembro
+    - outubro
+    - novembro
+    - dezembro
+    order:
+    - :day
+    - :month
+    - :year
+  datetime:
+    distance_in_words:
+      about_x_hours:
+        one: aproximadamente 1 hora
+        other: aproximadamente %{count} horas
+      about_x_months:
+        one: aproximadamente 1 mês
+        other: aproximadamente %{count} meses
+      about_x_years:
+        one: aproximadamente 1 ano
+        other: aproximadamente %{count} anos
+      almost_x_years:
+        one: quase 1 ano
+        other: quase %{count} anos
+      half_a_minute: meio minuto
+      less_than_x_seconds:
+        one: menos de 1 segundo
+        other: menos de %{count} segundos
+      less_than_x_minutes:
+        one: menos de um minuto
+        other: menos de %{count} minutos
+      over_x_years:
+        one: mais de 1 ano
+        other: mais de %{count} anos
+      x_seconds:
+        one: 1 segundo
+        other: "%{count} segundos"
+      x_minutes:
+        one: 1 minuto
+        other: "%{count} minutos"
+      x_days:
+        one: 1 dia
+        other: "%{count} dias"
+      x_months:
+        one: 1 mês
+        other: "%{count} meses"
+      x_years:
+        one: 1 ano
+        other: "%{count} anos"
+    prompts:
+      second: Segundo
+      minute: Minuto
+      hour: Hora
+      day: Dia
+      month: Mês
+      year: Ano
+  errors:
+    format: "%{attribute} %{message}"
+    messages:
+      accepted: deve ser aceito
+      blank: não pode ficar em branco
+      confirmation: não é igual a %{attribute}
+      empty: não pode ficar vazio
+      equal_to: deve ser igual a %{count}
+      even: deve ser par
+      exclusion: não está disponível
+      greater_than: deve ser maior que %{count}
+      greater_than_or_equal_to: deve ser maior ou igual a %{count}
+      inclusion: não está incluído na lista
+      invalid: não é válido
+      less_than: deve ser menor que %{count}
+      less_than_or_equal_to: deve ser menor ou igual a %{count}
+      model_invalid: 'A validação falhou: %{errors}'
+      not_a_number: não é um número
+      not_an_integer: não é um número inteiro
+      odd: deve ser ímpar
+      other_than: deve ser diferente de %{count}
+      present: deve ficar em branco
+      required: é obrigatório(a)
+      taken: já está em uso
+      too_long:
+        one: 'é muito longo (máximo: 1 caracter)'
+        other: 'é muito longo (máximo: %{count} caracteres)'
+      too_short:
+        one: 'é muito curto (mínimo: 1 caracter)'
+        other: 'é muito curto (mínimo: %{count} caracteres)'
+      wrong_length:
+        one: não possui o tamanho esperado (1 caracter)
+        other: não possui o tamanho esperado (%{count} caracteres)
+    template:
+      body: 'Por favor, verifique o(s) seguinte(s) campo(s):'
+      header:
+        one: 'Não foi possível gravar %{model}: 1 erro'
+        other: 'Não foi possível gravar %{model}: %{count} erros'
+  helpers:
+    submit:
+      create: "Criar %{model}"
+      update: "Atualizar %{model}"
+    links:
+      new: "Novo"
+      back: "Voltar"
+      edit: "Editar"
+      cancel: "Cancelar"
+      show: "Ver"
+      destroy: "Deletar"
+      confirm: "Você tem certeza?"
+    titles:
+      new: "Novo %{model}"
+      edit: "Editar %{model}"
+    tailor:
+      edit:
+        title: "Editar Costureiro"
+      new: Criar %{model}
+      edit: Editar %{model}
+    actions: Ações
+    submit:
+      bling_module_situation:
+        create: "Criar Situação do Módulo Bling"
+        update: "Atualizar Situação do Módulo Bling"
+  number:
+    currency:
+      format:
+        delimiter: "."
+        format: "%u %n"
+        precision: 2
+        separator: ","
+        significant: false
+        strip_insignificant_zeros: false
+        unit: R$
+    format:
+      delimiter: "."
+      precision: 3
+      separator: ","
+      significant: false
+      strip_insignificant_zeros: false
+    human:
+      decimal_units:
+        format: "%n %u"
+        units:
+          billion:
+            one: bilhão
+            other: bilhões
+          million:
+            one: milhão
+            other: milhões
+          quadrillion:
+            one: quatrilhão
+            other: quatrilhões
+          thousand: mil
+          trillion:
+            one: trilhão
+            other: trilhões
+          unit: ''
+      format:
+        delimiter: ''
+        precision: 3
+        significant: true
+        strip_insignificant_zeros: true
+      storage_units:
+        format: "%n %u"
+        units:
+          byte:
+            one: Byte
+            other: Bytes
+          eb: EB
+          gb: GB
+          kb: KB
+          mb: MB
+          pb: PB
+          tb: TB
+    percentage:
+      format:
+        delimiter: "."
+        format: "%n%"
+    precision:
+      format:
+        delimiter: "."
+  support:
+    array:
+      last_word_connector: " e "
+      two_words_connector: " e "
+      words_connector: ", "
+  time:
+    am: ''
+    formats:
+      default: "%a, %d de %B de %Y, %H:%M:%S %z"
+      long: "%d de %B de %Y, %H:%M"
+      short: "%d/%m/%Y"
+    pm: ''
+    
+  date:
+    formats:
+      default: "%d-%m-%Y"
+      long: "%d de %B de %Y"
+      short: "%d de %B"
+      
+  January: Janeiro
+  February: Fevereiro
+  March: Março
+  April: Abril
+  May: Maio
+  June: Junho
+  July: Julho
+  August: Agosto
+  September: Setembro
+  October: Outubro
+  November: Novembro
+  December: Dezembro
+helpers:
+  submit:
+    create: "Criar"
+    update: "Atualizar"
+  productions:
+    form:
+      tailor_selection: "Seleção de Alfaiate"
+      cut_date: "Data de Corte"
+      deliver_date: "Data de Entrega"
+      add_product: "Adicionar Produto"
+      consider: "Considerar"
+      submit_button: "Enviar"
+      notions_cost: "Custo de Aviamentos"
+      fabric_cost: "Custo de Tecido"
+      # Remove the total_material_cost line
+  productions:
+    show:
+      price_per_piece: "Preço por Peça"
+    production_card:
+      remaining: "Restante"
+  bling_module_situations:
+    title: "Situações dos Módulos Bling"
+    new: "Nova Situação do Módulo Bling"
+    edit: "Editar Situação do Módulo Bling"
+    create_success: "Situação do Módulo Bling criada com sucesso."
+    update_success: "Situação do Módulo Bling atualizada com sucesso."
+    destroy_success: "Situação do Módulo Bling excluída com sucesso."
+    confirm_destroy: "Tem certeza que deseja excluir esta Situação do Módulo Bling?"
