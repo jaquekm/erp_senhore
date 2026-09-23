@@ -5,13 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <%= csrf_meta_tags %>
   <%= csp_meta_tag %>
-  <title>Open ERP · Administração</title>
+  <title>JKode Sistemas · Administração</title>
   <%= stylesheet_link_tag 'application', media: 'all', 'data-turbo-track': 'reload' %>
   <%= javascript_include_tag 'application', 'data-turbo-track': 'reload', defer: true %>
 </head>
 <body>
   <nav class="navbar navbar-expand navbar-light bg-white shadow-sm px-3">
-    <%= link_to 'Open ERP · Admin', admin_accounts_path, class: 'navbar-brand' %>
+    <%= link_to 'JKode Sistemas · Admin', admin_accounts_path, class: 'navbar-brand' %>
     <% if admin_user_signed_in? %>
       <div class="ms-auto">
         <span class="me-3"><%= current_admin_user.email %></span>
