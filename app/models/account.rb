@@ -48,6 +48,18 @@ class Account < ApplicationRecord
     @feature_flags[feature_key]&.is_enabled? || false
   end
 
+  # Accounts the Bling sync cron jobs should run for: the module is turned
+  # on AND the account actually went through the Bling OAuth flow (has a
+  # token). Used to fan a job that used to hardcode account_id 1 out to
+  # every real client account instead.
+  def self.bling_sync_enabled_ids
+    bling_feature = Feature.find_by(feature_key: FeatureKey::BLING_INTEGRATION)
+    return [] unless bling_feature
+
+    enabled_account_ids = AccountFeature.where(feature: bling_feature, is_enabled: true).pluck(:account_id)
+    BlingDatum.where(account_id: enabled_account_ids).where.not(access_token: nil).distinct.pluck(:account_id)
+  end
+
   def seats_available?
     users.count < max_users
   end

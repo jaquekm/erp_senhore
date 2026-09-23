@@ -25,6 +25,8 @@ Rails.application.configure do
   # Turn false under Spring and add config.action_view.cache_template_loading = true.
   config.cache_classes = true
 
+  config.active_job.queue_adapter = :test
+
   # Configure what happens when an asset lookup is performed and nothing is found.
   # If you turn off "asset fallback" then an error will be raised when an asset cannot be found.
   config.assets.unknown_asset_fallback = true
