@@ -4,6 +4,11 @@
 class FeatureKey < EnumerateIt::Base
   associate_values(
     stock: 0,
-    bling_integration: 1
+    bling_integration: 1,
+    purchases: 2,
+    sales: 3,
+    production: 4,
+    finance: 5,
+    shein_integration: 6
   )
 end

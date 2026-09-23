@@ -1,4 +1,5 @@
 class SheinDashboardsController < ApplicationController
+  requires_feature :shein_integration
 
   def index
     finance_per_status

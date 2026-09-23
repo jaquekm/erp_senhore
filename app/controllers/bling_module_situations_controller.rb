@@ -1,4 +1,5 @@
 class BlingModuleSituationsController < ApplicationController
+  requires_feature :bling_integration
   before_action :set_bling_module_situation, only: [:show, :edit, :update, :destroy]
 
   def index

@@ -7,7 +7,6 @@
 #  discount            :decimal(, )
 #  ipi_tax             :decimal(, )
 #  long_description    :string
-#  pending             :boolean          default(FALSE)
 #  quantity            :integer
 #  resolved            :boolean          default(FALSE)
 #  sku                 :string
@@ -22,6 +21,7 @@
 # Indexes
 #
 #  index_items_on_resolved  (resolved)
+#  index_items_on_sku       (sku)
 #
 class Item < ApplicationRecord
   belongs_to :account

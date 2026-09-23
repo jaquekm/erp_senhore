@@ -2,6 +2,9 @@
 require 'customer/import_customer_csv'
 
 class CustomersController < ApplicationController
+  # Every action here already calls `authorize Customer`, which (via
+  # ApplicationPolicy) requires bling_integration and redirects to
+  # products_path when it's off -- no separate requires_feature needed.
   before_action :set_customer, only: %i[show edit update destroy]
   include Pagy::Backend
   # GET /customers

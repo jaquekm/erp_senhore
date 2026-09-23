@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class ProductsController < ApplicationController
+  requires_feature :stock, except: %i[index_defer tags_index_defer]
   skip_before_action :verify_authenticity_token
   skip_before_action :authenticate_user!, only: %i[index_defer tags_index_defer]
   before_action :set_product, only: %i[show edit update destroy destroy_from_index]

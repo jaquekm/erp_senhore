@@ -1,6 +1,7 @@
 # app/controllers/shein_orders_controller.rb
 
 class SheinOrdersController < ApplicationController
+  requires_feature :shein_integration
   before_action :set_shein_order, only: [:show, :edit, :update, :destroy]
 
   def index

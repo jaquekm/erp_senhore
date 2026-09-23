@@ -1,6 +1,9 @@
 require 'csv'
 
 class BlingOrderItemsController < ApplicationController
+  # Every action here already calls `authorize Customer`, which (via
+  # ApplicationPolicy) requires bling_integration and redirects to
+  # products_path when it's off -- no separate requires_feature needed.
   before_action :set_filter_params
   include Pagy::Backend
   inherit_resources

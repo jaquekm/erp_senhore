@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class GroupsController < ApplicationController
+  requires_feature :stock
   before_action :set_group, only: %i[show edit update destroy]
 
   # GET /groups

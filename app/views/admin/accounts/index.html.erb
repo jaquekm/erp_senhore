@@ -1,0 +1,32 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h3">Contas de clientes</h1>
+  <%= link_to 'Nova conta', new_admin_account_path, class: 'btn btn-primary' %>
+</div>
+
+<div class="card">
+  <table class="table table-hover mb-0">
+    <thead>
+      <tr>
+        <th>Empresa</th>
+        <th>E-mail titular</th>
+        <th>Usuários</th>
+        <th>Sessões simultâneas</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @accounts.each do |account| %>
+        <tr>
+          <td><%= account.company_name %></td>
+          <td><%= account.user.email %></td>
+          <td><%= account.users.count %> / <%= account.max_users %></td>
+          <td><%= account.active_sessions_count %> / <%= account.max_concurrent_sessions %></td>
+          <td class="text-end"><%= link_to 'Gerenciar', admin_account_path(account), class: 'btn btn-sm btn-outline-primary' %></td>
+        </tr>
+      <% end %>
+      <% if @accounts.empty? %>
+        <tr><td colspan="5" class="text-center text-muted py-4">Nenhuma conta cadastrada ainda.</td></tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

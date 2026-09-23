@@ -12,6 +12,11 @@
 #  discounted_warehouse_sku_id :string
 #  product_id                  :integer
 #
+# Indexes
+#
+#  index_stocks_on_account_id  (account_id)
+#  index_stocks_on_product_id  (product_id)
+#
 class Stock < ApplicationRecord
   require 'forecasts/basic_stock'
 

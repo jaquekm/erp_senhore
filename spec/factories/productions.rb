@@ -7,8 +7,11 @@
 #  consider               :boolean          default(FALSE)
 #  cut_date               :datetime
 #  expected_delivery_date :date
+#  fabric_cost            :decimal(10, 2)
+#  notions_cost           :decimal(10, 2)
 #  observation            :text
 #  paid                   :boolean
+#  payment_date           :date
 #  pieces_missing         :integer
 #  service_order_number   :string
 #  created_at             :datetime         not null
@@ -19,6 +22,7 @@
 # Indexes
 #
 #  index_productions_on_account_id              (account_id)
+#  index_productions_on_confirmed               (confirmed)
 #  index_productions_on_cut_date                (cut_date)
 #  index_productions_on_expected_delivery_date  (expected_delivery_date)
 #  index_productions_on_tailor_id               (tailor_id)

@@ -5,11 +5,9 @@ require 'rails_helper'
 RSpec.describe 'Dashboards', type: :request do
   describe 'GET /others_status' do
     include_context 'with user signed in'
-    let(:feature_bling) { FactoryBot.create(:feature, feature_key: FeatureKey::BLING_INTEGRATION, is_enabled: true) }
 
     before do
-      user.account.features << feature_bling
-      user.account.account_features.first.update(is_enabled: true)
+      Services::AccountFeatureToggler.call(account: user.account, feature_key: :bling_integration, enabled: true)
     end
 
     it 'returns http success' do

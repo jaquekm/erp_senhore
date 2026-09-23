@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class StocksController < ApplicationController
+  requires_feature :stock
   include Pagy::Backend
   before_action :set_stock, only: [:show, :apply_discount]
 

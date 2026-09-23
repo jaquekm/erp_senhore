@@ -4,6 +4,7 @@ require 'prawn'
 include ActionView::Helpers::NumberHelper
 
 class ProductionsController < ApplicationController
+  requires_feature :production
   before_action :set_production, only: [:show, :edit, :update, :destroy, :verify]
   before_action :set_tailors, only: [:new, :edit, :create, :update]
 
