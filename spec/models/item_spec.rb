@@ -8,6 +8,7 @@
 #  ipi_tax             :decimal(, )
 #  long_description    :string
 #  quantity            :integer
+#  resolved            :boolean          default(FALSE)
 #  sku                 :string
 #  unity               :integer
 #  value               :decimal(, )
@@ -16,6 +17,11 @@
 #  account_id          :integer
 #  bling_order_item_id :bigint
 #  product_id          :bigint
+#
+# Indexes
+#
+#  index_items_on_resolved  (resolved)
+#  index_items_on_sku       (sku)
 #
 require 'rails_helper'
 

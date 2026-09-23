@@ -1,0 +1,81 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h1 class="h3 mb-0"><%= @account.company_name %></h1>
+    <span class="text-muted">Titular: <%= @account.user.email %></span>
+  </div>
+  <%= link_to 'Editar limites', edit_admin_account_path(@account), class: 'btn btn-outline-secondary' %>
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="card mb-4">
+      <div class="card-header">Módulos liberados</div>
+      <ul class="list-group list-group-flush">
+        <% @modules.each do |feature| %>
+          <% account_feature = @account_features_by_feature_id[feature.id] %>
+          <% enabled = account_feature&.is_enabled? || false %>
+          <% dependencies = Feature.dependencies_for(feature.key) %>
+          <% dependents = Feature.dependents_of(feature.key) %>
+          <li class="list-group-item d-flex justify-content-between align-items-start">
+            <div>
+              <strong><%= feature.name %></strong>
+              <% if dependencies.any? %>
+                <div class="text-muted small">Depende de: <%= dependencies.map { |k| Feature.find_by(feature_key: FeatureKey.const_get(k.to_s.upcase))&.name || k }.join(', ') %></div>
+              <% end %>
+              <% if enabled && dependents.any? %>
+                <div class="text-muted small">Desligar também desliga: <%= dependents.map { |k| Feature.find_by(feature_key: FeatureKey.const_get(k.to_s.upcase))&.name || k }.join(', ') %></div>
+              <% end %>
+            </div>
+            <%= button_to (enabled ? 'Desligar' : 'Ligar'),
+                          toggle_feature_admin_account_path(@account),
+                          method: :patch,
+                          params: { feature_key: feature.key, enabled: !enabled },
+                          class: "btn btn-sm #{enabled ? 'btn-success' : 'btn-outline-secondary'}" %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-header">Limites</div>
+      <div class="card-body">
+        <p class="mb-1"><strong>Usuários (logins):</strong> <%= @users.count %> / <%= @account.max_users %></p>
+        <p class="mb-0"><strong>Sessões simultâneas ativas:</strong> <%= @account.active_sessions_count %> / <%= @account.max_concurrent_sessions %></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        Usuários da conta
+        <% if @account.seats_available? %>
+          <%= link_to 'Novo usuário', new_admin_account_user_path(@account), class: 'btn btn-sm btn-primary' %>
+        <% else %>
+          <span class="badge bg-secondary">Limite atingido</span>
+        <% end %>
+      </div>
+      <ul class="list-group list-group-flush">
+        <% @users.each do |user| %>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <div>
+              <%= user.email %>
+              <span class="badge bg-<%= user.owner? ? 'primary' : 'light text-dark' %>"><%= user.owner? ? 'Titular' : 'Usuário' %></span>
+              <% unless user.active? %>
+                <span class="badge bg-danger">Desativado</span>
+              <% end %>
+            </div>
+            <div>
+              <%= link_to 'Editar', edit_admin_account_user_path(@account, user), class: 'btn btn-sm btn-outline-secondary' %>
+              <% unless user.owner? %>
+                <%= button_to 'Remover', admin_account_user_path(@account, user), method: :delete,
+                              class: 'btn btn-sm btn-outline-danger',
+                              form: { data: { turbo_confirm: 'Remover este usuário?' } } %>
+              <% end %>
+            </div>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+</div>

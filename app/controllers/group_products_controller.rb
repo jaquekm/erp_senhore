@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class GroupProductsController < ApplicationController
+  requires_feature :stock
   before_action :set_group_product, only: %i[show edit update destroy]
 
   # GET /group_products

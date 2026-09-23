@@ -12,6 +12,12 @@ Rails.application.configure do
     Bullet.enable        = true
     Bullet.bullet_logger = true
     Bullet.raise         = true # raise an error if n+1 query occurs
+
+    # current_user.account is a single indexed primary-key lookup done once
+    # per request (never a loop), so it's not a real N+1 -- but Devise's own
+    # user lookup can't be made to eager-load it, so Bullet always sees it as
+    # a separate query from wherever current_user came from and flags it.
+    Bullet.add_safelist type: :n_plus_one_query, class_name: 'User', association: :account
   end
 
   # Settings specified here will take precedence over those in config/application.rb.

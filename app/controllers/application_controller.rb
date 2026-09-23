@@ -4,20 +4,28 @@ class ApplicationController < ActionController::Base
   include Pundit::Authorization
   include ForgeryProtection
   include SetPlatform
+  include SessionConcurrencyGuard
+  include FeatureGate
   before_action :authenticate_user!
   before_action :set_locale_from_cookie # Keeps the system with the same translation selected before by user.
   set_current_tenant_through_filter
   before_action :set_current_account
   before_action :configure_permitted_parameters, if: :devise_controller?
   layout :layout_by_resource
+  helper_method :current_account
 
   rescue_from Pundit::NotAuthorizedError, with: :current_account_not_authorized
 
   def set_current_account
     return if current_user.blank?
 
-    current_account = current_user.account
     ActsAsTenant.current_tenant = current_account
+  end
+
+  def current_account
+    return if current_user.blank?
+
+    @current_account ||= current_user.account
   end
 
   protected
@@ -40,10 +48,9 @@ class ApplicationController < ActionController::Base
     else
       'application'
     end
-  end  
-
-  def set_locale_from_cookie    
-    I18n.locale = cookies[:locale]&.to_sym if cookies[:locale]
   end
 
+  def set_locale_from_cookie
+    I18n.locale = cookies[:locale]&.to_sym if cookies[:locale]
+  end
 end

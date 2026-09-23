@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class SalesController < ApplicationController
+  requires_feature :sales
   before_action :set_sale, only: %i[show edit update destroy]
   include Pagy::Backend
   # GET /sales

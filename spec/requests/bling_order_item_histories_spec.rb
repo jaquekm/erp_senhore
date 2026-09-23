@@ -11,6 +11,7 @@ RSpec.describe 'BlingOrderItemHistories', type: :request do
 
   before do
     allow_any_instance_of(BlingOrderItem).to receive(:synchronize_items).and_return(true)
+    Services::AccountFeatureToggler.call(account: user.account, feature_key: :bling_integration, enabled: true)
     sign_in user
   end
 

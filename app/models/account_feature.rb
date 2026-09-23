@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: account_features
@@ -9,17 +11,13 @@
 #  account_id :bigint           not null
 #  feature_id :integer          not null
 #
+# Indexes
+#
+#  index_account_features_on_account_id_and_feature_id  (account_id,feature_id) UNIQUE
+#
 class AccountFeature < ApplicationRecord
   belongs_to :account
   belongs_to :feature
 
-  before_create :enable_stock
-
-  private
-
-  def enable_stock
-    return if feature.bling_integration?
-
-    self.is_enabled = true
-  end
+  validates :feature_id, uniqueness: { scope: :account_id }
 end

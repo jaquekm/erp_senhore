@@ -1,4 +1,5 @@
 class WarehousesController < ApplicationController
+  requires_feature :stock
   before_action :set_warehouse, only: [:show, :edit, :update, :destroy]
 
   def index

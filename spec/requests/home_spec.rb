@@ -7,11 +7,8 @@ RSpec.describe 'home' do
     let(:user) { FactoryBot.create(:user) }
 
     context 'with feature bling' do
-      let(:feature_bling) { FactoryBot.create(:feature, feature_key: FeatureKey::BLING_INTEGRATION, is_enabled: true) }
-
       before do
-        user.account.features << feature_bling
-        user.account.account_features.first.update(is_enabled: true)
+        Services::AccountFeatureToggler.call(account: user.account, feature_key: :bling_integration, enabled: true)
 
         FactoryBot.create(:bling_order_item, valor: 10.5, store_id: '204061683', situation_id: '94871',
                           date: Time.zone.today, bling_order_id: Faker::Number.number,
@@ -82,8 +79,6 @@ RSpec.describe 'home' do
     end
 
     context 'without feature bling' do
-      let(:feature_bling) { FactoryBot.create(:feature, feature_key: FeatureKey::BLING_INTEGRATION, is_enabled: true) }
-
       before do
         FactoryBot.create(:bling_order_item, valor: 10.5, store_id: '204061683', situation_id: '94871',
                           date: Time.zone.today, bling_order_id: Faker::Number.number,

@@ -4,6 +4,18 @@ Rails.application.routes.draw do
   # mount Sidekiq::Web => '/sidekiq'
   mount GoodJob::Engine => 'good_job'
 
+  devise_for :admin_users, path: 'admin', controllers: { sessions: 'admin/sessions' }
+
+  namespace :admin do
+    resources :accounts, only: %i[index new create show edit update] do
+      member do
+        patch :toggle_feature
+      end
+      resources :users, only: %i[new create edit update destroy], controller: 'accounts/users'
+    end
+    root to: 'accounts#index'
+  end
+
   resources :productions do
     collection do
       get 'missing_pieces'
@@ -54,7 +66,7 @@ Rails.application.routes.draw do
     end
   end
 
-  devise_for :users
+  devise_for :users, controllers: { sessions: 'users/sessions' }
 
   resources :stocks do
     member do

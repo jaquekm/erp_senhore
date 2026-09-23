@@ -1,4 +1,5 @@
 class ItemsController < ApplicationController
+  requires_feature :stock
   def update_status
     @item = Item.find(params[:id])
     case params[:status]

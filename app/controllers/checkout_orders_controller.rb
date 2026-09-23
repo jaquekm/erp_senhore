@@ -1,4 +1,5 @@
 class CheckoutOrdersController < ApplicationController
+  requires_feature :sales
 
   def index
     @combined_order_data ||= []

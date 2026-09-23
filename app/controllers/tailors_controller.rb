@@ -1,4 +1,5 @@
 class TailorsController < ApplicationController
+  requires_feature :production
   before_action :set_tailor, only: [:show, :edit, :update, :destroy]
 
   def index

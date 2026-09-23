@@ -4,11 +4,13 @@
 #
 # Table name: accounts
 #
-#  id           :bigint           not null, primary key
-#  company_name :string
-#  created_at   :datetime         not null
-#  updated_at   :datetime         not null
-#  user_id      :bigint           not null
+#  id                      :bigint           not null, primary key
+#  company_name            :string
+#  max_concurrent_sessions :integer          default(1), not null
+#  max_users               :integer          default(1), not null
+#  created_at              :datetime         not null
+#  updated_at              :datetime         not null
+#  user_id                 :bigint           not null
 #
 # Indexes
 #

@@ -1,4 +1,5 @@
 class StoresController < ApplicationController
+  requires_feature :bling_integration
   before_action :set_store, only: %i[show edit update destroy]
 
   def index

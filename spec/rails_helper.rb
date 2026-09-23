@@ -38,13 +38,19 @@ rescue ActiveRecord::PendingMigrationError => e
 end
 RSpec.configure do |config|
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
-  config.fixture_path = "#{::Rails.root}/spec/fixtures"
+  config.fixture_paths = ["#{::Rails.root}/spec/fixtures"]
   config.include Warden::Test::Helpers
   include LoginUser
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
   # instead of true.
   config.use_transactional_fixtures = true
+
+  # A fresh test database is built from schema.rb (db:schema:load), which
+  # never replays migration data -- so the Feature master rows the module
+  # gating system depends on need seeding here too, not just in the
+  # migration that introduced them.
+  config.before(:suite) { Feature.sync_master_data! }
 
   # You can uncomment this line to turn off ActiveRecord support entirely.
   # config.use_active_record = false

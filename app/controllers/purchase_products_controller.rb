@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class PurchaseProductsController < ApplicationController
+  requires_feature :purchases
   before_action :set_purchase_product, only: %i[show edit update destroy]
   include Pagy::Backend
   # GET /purchase_products

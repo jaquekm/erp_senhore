@@ -2,14 +2,20 @@
 #
 # Table name: stocks
 #
-#  id                    :bigint           not null, primary key
-#  total_balance         :integer
-#  total_virtual_balance :integer
-#  created_at            :datetime         not null
-#  updated_at            :datetime         not null
-#  account_id            :integer
-#  bling_product_id      :bigint
-#  product_id            :integer
+#  id                          :bigint           not null, primary key
+#  total_balance               :integer
+#  total_virtual_balance       :integer
+#  created_at                  :datetime         not null
+#  updated_at                  :datetime         not null
+#  account_id                  :integer
+#  bling_product_id            :bigint
+#  discounted_warehouse_sku_id :string
+#  product_id                  :integer
+#
+# Indexes
+#
+#  index_stocks_on_account_id  (account_id)
+#  index_stocks_on_product_id  (product_id)
 #
 require 'rails_helper'
 

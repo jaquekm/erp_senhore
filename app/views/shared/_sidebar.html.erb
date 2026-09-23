@@ -2,13 +2,13 @@
   <div class="main-sidebar sidebar-style-2">
     <aside id="sidebar-wrapper">
       <div class="sidebar-brand">
-        <%= link_to current_user.account.company_name, root_path %>
+        <%= link_to current_account.company_name, root_path %>
       </div>
       <div class="sidebar-brand sidebar-brand-sm">
-        <%= link_to 'OP', root_path %>
+        <%= link_to 'JK', root_path %>
       </div>
       <ul class="sidebar-menu" data-controller="sidebar">
-        <% if account_policy_enabled? %>
+        <% if feature_enabled?(:bling_integration) %>
           <li class="menu-header">Gerencial</li>
           <%= render 'shared/sidebar_dropdown', title: t("dashboards.title"), icon: 'fas fa-tachometer-alt' do %>
             <li class="<%= active_nav_item('home', 'index') %>">
@@ -27,8 +27,10 @@
               <%= link_to 'Resumo de Status', dashboards_status_summary_path, class: 'nav-link' %>
             </li>
           <% end %>
-          
-          <%= render 'shared/sidebar_dropdown', title: t("reports.title"), icon: 'fas fa-chart-bar' do %>
+        <% end %>
+
+        <%= render 'shared/sidebar_dropdown', title: t("reports.title"), icon: 'fas fa-chart-bar' do %>
+          <% if feature_enabled?(:production) %>
             <li class="<%= active_nav_item('productions', 'missing_pieces') %>">
               <%= link_to t("productions.side_missing_pieces"), missing_pieces_productions_path, class: 'nav-link' %>
             </li>
@@ -41,72 +43,81 @@
             <li class="<%= active_nav_item('productions', 'price_per_piece_report') %>">
               <%= link_to t("productions.price_per_piece_report"), price_per_piece_report_productions_path, class: 'nav-link' %>
             </li>
-            <li class="<%= active_nav_menu_item([show_pending_orders_path]) %>">
-              <%= link_to t("audits.pendings"), show_pending_orders_path, class: 'nav-link' %>
+            <li class="<%= active_nav_item('productions', 'calendar') %>">
+              <%= link_to t("productions.calendar"), calendar_productions_path, class: 'nav-link' %>
             </li>
-            <li class="<%= active_nav_menu_item([show_pending_product_planning_path]) %>">
-              <%= link_to t("audits.pending_product_planning"), show_pending_product_planning_path, class: 'nav-link' %>
-            </li>
+          <% end %>
+          <li class="<%= active_nav_menu_item([show_pending_orders_path]) %>">
+            <%= link_to t("audits.pendings"), show_pending_orders_path, class: 'nav-link' %>
+          </li>
+          <li class="<%= active_nav_menu_item([show_pending_product_planning_path]) %>">
+            <%= link_to t("audits.pending_product_planning"), show_pending_product_planning_path, class: 'nav-link' %>
+          </li>
+          <% if feature_enabled?(:stock) %>
             <li class="<%= active_nav_item('stocks', 'index') %>">
               <%= link_to t("stocks.shopping_suggestion"), stocks_path, class: 'nav-link' %>
             </li>
             <li class="<%= active_nav_item('stocks', 'null_stock_details') %>">
               <%= link_to t("stocks.null_stock_details"), null_stock_details_stocks_path, class: 'nav-link' %>
             </li>
+          <% end %>
+          <% if feature_enabled?(:sales) %>
             <li class="<%= active_nav_menu_item([top_selling_products_path]) %>">
               <%= link_to t("audits.top_selling_products"), top_selling_products_path, class: 'nav-link' %>
             </li>
-              <li class="<%= active_nav_item('productions', 'calendar') %>">
-              <%= link_to t("productions.calendar"), calendar_productions_path, class: 'nav-link' %>
+          <% end %>
+        <% end %>
+
+        <li class="menu-header">Operação</li>
+        <% if feature_enabled?(:production) %>
+          <%= render 'shared/sidebar_dropdown', title: t("productions.one"), icon: 'fas fa-rocket' do %>
+            <li class="<%= active_nav_item('productions', 'index') %>">
+              <%= link_to t("productions.list"), productions_path, class: 'nav-link' %>
+            </li>
+            <li class="<%= active_nav_item('productions', 'new') %>">
+              <%= link_to t("productions.create"), new_production_path, class: 'nav-link' %>
+            </li>
+            <li class="<%= active_nav_item('tailors', 'index') %>">
+              <%= link_to t("tailors.list"), tailors_path, class: 'nav-link' %>
+            </li>
+            <li class="<%= active_nav_item('tailors', 'new') %>">
+              <%= link_to t("tailors.create"), new_tailor_path, class: 'nav-link' %>
             </li>
           <% end %>
         <% end %>
-        
-        <li class="menu-header">Operação</li>
-        <%= render 'shared/sidebar_dropdown', title: t("productions.one"), icon: 'fas fa-rocket' do %>
-          <li class="<%= active_nav_item('productions', 'index') %>">
-            <%= link_to t("productions.list"), productions_path, class: 'nav-link' %>
-          </li>
-          <li class="<%= active_nav_item('productions', 'new') %>">
-            <%= link_to t("productions.create"), new_production_path, class: 'nav-link' %>
-          </li>
-          <li class="<%= active_nav_item('tailors', 'index') %>">
-            <%= link_to t("tailors.list"), tailors_path, class: 'nav-link' %>
-          </li>
-          <li class="<%= active_nav_item('tailors', 'new') %>">
-            <%= link_to t("tailors.create"), new_tailor_path, class: 'nav-link' %>
-          </li>
+
+        <% if feature_enabled?(:stock) %>
+          <%= render 'shared/sidebar_dropdown', title: t("warehouses.two"), icon: 'fas fa-warehouse' do %>
+            <li class="<%= active_nav_item('warehouses', 'index') %>">
+              <%= link_to t("warehouses.list"), warehouses_path, class: 'nav-link' %>
+            </li>
+            <li class="<%= active_nav_item('warehouses', 'new') %>">
+              <%= link_to t("warehouses.create"), new_warehouse_path, class: 'nav-link' %>
+            </li>
+          <% end %>
+
+          <%= render 'shared/sidebar_dropdown', title: t("categories.two"), icon: 'fas fa-th-list' do %>
+            <li class="<%= active_nav_item('categories', 'index') %>">
+              <%= link_to t("categories.list"), categories_path, class: 'nav-link' %>
+            </li>
+            <li class="<%= active_nav_item('categories', 'new') %>">
+              <%= link_to t("categories.create"), new_category_path, class: 'nav-link' %>
+            </li>
+          <% end %>
+
+          <%= render 'shared/sidebar_dropdown', title: t("products.two"), icon: 'fas fa-box-open' do %>
+            <li class="<%= active_nav_item('products', 'index') %>">
+              <%= link_to t("products.list"), products_path, class: 'nav-link' %>
+            </li>
+            <li class="<%= active_nav_item('products', 'new') %>">
+              <%= link_to t("products.create"), new_product_path, class: 'nav-link' %>
+            </li>
+          <% end %>
+
+          <%= render 'shared/sidebar_qr_code_generator' %>
         <% end %>
-        
-        <%= render 'shared/sidebar_dropdown', title: t("warehouses.two"), icon: 'fas fa-warehouse' do %>
-          <li class="<%= active_nav_item('warehouses', 'index') %>">
-            <%= link_to t("warehouses.list"), warehouses_path, class: 'nav-link' %>
-          </li>
-          <li class="<%= active_nav_item('warehouses', 'new') %>">
-            <%= link_to t("warehouses.create"), new_warehouse_path, class: 'nav-link' %>
-          </li>
-        <% end %>
-        
-        <%= render 'shared/sidebar_dropdown', title: t("categories.two"), icon: 'fas fa-th-list' do %>
-          <li class="<%= active_nav_item('categories', 'index') %>">
-            <%= link_to t("categories.list"), categories_path, class: 'nav-link' %>
-          </li>
-          <li class="<%= active_nav_item('categories', 'new') %>">
-            <%= link_to t("categories.create"), new_category_path, class: 'nav-link' %>
-          </li>
-        <% end %>
-        
-        <%= render 'shared/sidebar_dropdown', title: t("products.two"), icon: 'fas fa-box-open' do %>
-          <li class="<%= active_nav_item('products', 'index') %>">
-            <%= link_to t("products.list"), products_path, class: 'nav-link' %>
-          </li>
-          <li class="<%= active_nav_item('products', 'new') %>">
-            <%= link_to t("products.create"), new_product_path, class: 'nav-link' %>
-          </li>
-        <% end %>
-        
-        <%= render 'shared/sidebar_qr_code_generator' %>
-        <% if account_policy_enabled? %>
+
+        <% if feature_enabled?(:bling_integration) %>
           <%= render 'shared/sidebar_dropdown', title: t("stores.two"), icon: 'fas fa-store' do %>
             <li class="<%= active_nav_item('stores', 'index') %>">
               <%= link_to t("stores.list"), stores_path, class: 'nav-link' %>
@@ -116,99 +127,122 @@
             </li>
           <% end %>
         <% end %>
-        
-        <%= render 'shared/sidebar_dropdown', title: t("suppliers.two"), icon: 'fas fa-truck' do %>
-          <li class="<%= active_nav_item('suppliers', 'index') %>">
-            <%= link_to t("suppliers.list"), suppliers_path, class: 'nav-link' %>
-          </li>
-          <li class="<%= active_nav_item('suppliers', 'new') %>">
-            <%= link_to t("suppliers.create"), new_supplier_path, class: 'nav-link' %>
-          </li>
+
+        <% if feature_enabled?(:purchases) %>
+          <%= render 'shared/sidebar_dropdown', title: t("suppliers.two"), icon: 'fas fa-truck' do %>
+            <li class="<%= active_nav_item('suppliers', 'index') %>">
+              <%= link_to t("suppliers.list"), suppliers_path, class: 'nav-link' %>
+            </li>
+            <li class="<%= active_nav_item('suppliers', 'new') %>">
+              <%= link_to t("suppliers.create"), new_supplier_path, class: 'nav-link' %>
+            </li>
+          <% end %>
+
+          <%= render 'shared/sidebar_dropdown', title: t("entries.two"), icon: 'fas fa-warehouse' do %>
+            <li class="<%= active_nav_item('purchase_products', 'index') %>">
+              <%= link_to t("entries.list"), purchase_products_path, class: 'nav-link' %>
+            </li>
+            <li class="<%= active_nav_item('purchase_products', 'new') %>">
+              <%= link_to t("entries.create"), new_purchase_product_path, class: 'nav-link' %>
+            </li>
+          <% end %>
         <% end %>
-        
-        <%= render 'shared/sidebar_dropdown', title: t("entries.two"), icon: 'fas fa-warehouse' do %>
-          <li class="<%= active_nav_item('purchase_products', 'index') %>">
-            <%= link_to t("entries.list"), purchase_products_path, class: 'nav-link' %>
-          </li>
-          <li class="<%= active_nav_item('purchase_products', 'new') %>">
-            <%= link_to t("entries.create"), new_purchase_product_path, class: 'nav-link' %>
-          </li>
+
+        <% if feature_enabled?(:sales) %>
+          <%= render 'shared/sidebar_dropdown', title: t("exits.two"), icon: 'fas fa-sign-out-alt' do %>
+            <li class="<%= active_nav_item('sale_products', 'index') %>">
+              <%= link_to t("exits.list"), sale_products_path, class: 'nav-link' %>
+            </li>
+            <li class="<%= active_nav_item('sale_products', 'new') %>">
+              <%= link_to t("exits.create"), new_sale_product_path, class: 'nav-link' %>
+            </li>
+          <% end %>
+
+          <%= render 'shared/sidebar_dropdown', title: t("sales.two"), icon: 'fas fa-shopping-cart' do %>
+            <li class="<%= active_nav_item('sales', 'index') %>">
+              <%= link_to t("sales.list"), sales_path, class: 'nav-link' %>
+            </li>
+            <% if feature_enabled?(:bling_integration) %>
+              <li class="<%= active_nav_item('sales', 'index') %>">
+                <%= link_to t("activerecord.models.bling_order_items.list"), bling_order_items_path, class: 'nav-link' %>
+              </li>
+            <% end %>
+            <li class="<%= active_nav_item('sales', 'new') %>">
+              <%= link_to t("sales.create"), new_sale_path, class: 'nav-link' %>
+            </li>
+          <% end %>
         <% end %>
-        
-        <%= render 'shared/sidebar_dropdown', title: t("exits.two"), icon: 'fas fa-sign-out-alt' do %>
-          <li class="<%= active_nav_item('sale_products', 'index') %>">
-            <%= link_to t("exits.list"), sale_products_path, class: 'nav-link' %>
-          </li>
-          <li class="<%= active_nav_item('sale_products', 'new') %>">
-            <%= link_to t("exits.create"), new_sale_product_path, class: 'nav-link' %>
-          </li>
+
+        <% if feature_enabled?(:sales) || feature_enabled?(:shein_integration) %>
+          <%= render 'shared/sidebar_dropdown', title: t("dashboards.second_title"), icon: 'fas fa-shopping-bag' do %>
+            <% if feature_enabled?(:sales) %>
+              <li class="<%= active_nav_item('checkout_orders', 'index') %>">
+                <%= link_to t("sales.checkout"), checkout_orders_path, class: 'nav-link' %>
+              </li>
+            <% end %>
+            <% if feature_enabled?(:shein_integration) %>
+              <li class="<%= active_nav_item('shein_bling_order_items', 'index') %>">
+                <%= link_to t("dashboards.three"), shein_bling_order_items_path, class: 'nav-link' %>
+              </li>
+              <li class="<%= active_nav_item('shein_orders', 'index') %>">
+                <%= link_to t("dashboards.two"), shein_orders_path, class: 'nav-link' %>
+              </li>
+              <li class="<%= active_nav_menu_item([shein_dashboards_path]) %>">
+                <%= link_to t("audits.finance"), shein_dashboards_path, class: 'nav-link' %>
+              </li>
+            <% end %>
+          <% end %>
         <% end %>
-        
-        <%= render 'shared/sidebar_dropdown', title: t("sales.two"), icon: 'fas fa-shopping-cart' do %>
-          <li class="<%= active_nav_item('sales', 'index') %>">
-            <%= link_to t("sales.list"), sales_path, class: 'nav-link' %>
-          </li>
-          <li class="<%= active_nav_item('sales', 'index') %>">
-            <%= link_to t("activerecord.models.bling_order_items.list"), bling_order_items_path, class: 'nav-link' %>
-          </li>
-          <li class="<%= active_nav_item('sales', 'new') %>">
-            <%= link_to t("sales.create"), new_sale_path, class: 'nav-link' %>
-          </li>
+
+        <% if feature_enabled?(:bling_integration) %>
+          <%= render 'shared/sidebar_dropdown', title: t("customers.two"), icon: 'fas fa-users' do %>
+            <li class="<%= active_nav_item('customers', 'index') %>">
+              <%= link_to t("customers.list"), customers_path, class: 'nav-link' %>
+            </li>
+            <li class="<%= active_nav_item('customers', 'new') %>">
+              <%= link_to t("customers.create"), new_customer_path, class: 'nav-link' %>
+            </li>
+          <% end %>
         <% end %>
-        
-        <%= render 'shared/sidebar_dropdown', title: t("dashboards.second_title"), icon: 'fas fa-shopping-bag' do %>
-          <li class="<%= active_nav_item('checkout_orders', 'index') %>">
-            <%= link_to t("sales.checkout"), checkout_orders_path, class: 'nav-link' %>
-          </li>
-          <li class="<%= active_nav_item('shein_bling_order_items', 'index') %>">
-            <%= link_to t("dashboards.three"), shein_bling_order_items_path, class: 'nav-link' %>
-          </li>
-          <li class="<%= active_nav_item('shein_orders', 'index') %>">
-            <%= link_to t("dashboards.two"), shein_orders_path, class: 'nav-link' %>
-          </li>
-          <li class="<%= active_nav_menu_item([shein_dashboards_path]) %>">
-            <%= link_to t("audits.finance"), shein_dashboards_path, class: 'nav-link' %>
-          </li>
+
+        <% if feature_enabled?(:shein_integration) || feature_enabled?(:finance) %>
+          <%= render 'shared/sidebar_dropdown', title: t("uploads.one"), icon: 'fas fa-upload' do %>
+            <% if feature_enabled?(:shein_integration) %>
+              <li class="<%= active_nav_item('customers', 'index') %>">
+                <%= link_to t("uploads.shein_orders"), upload_shein_orders_path, class: 'nav-link' %>
+              </li>
+            <% end %>
+            <% if feature_enabled?(:finance) %>
+              <li class="<%= active_nav_item('customers', 'index') %>">
+                <%= link_to t("uploads.finance"), upload_finance_data_path, class: 'nav-link' %>
+              </li>
+            <% end %>
+          <% end %>
         <% end %>
-        
-        <%= render 'shared/sidebar_dropdown', title: t("customers.two"), icon: 'fas fa-users' do %>
-          <li class="<%= active_nav_item('customers', 'index') %>">
-            <%= link_to t("customers.list"), customers_path, class: 'nav-link' %>
-          </li>
-          <li class="<%= active_nav_item('customers', 'new') %>">
-            <%= link_to t("customers.create"), new_customer_path, class: 'nav-link' %>
-          </li>
-        <% end %>
-        
-        <%= render 'shared/sidebar_dropdown', title: t("uploads.one"), icon: 'fas fa-upload' do %>
-          <li class="<%= active_nav_item('customers', 'index') %>">
-            <%= link_to t("uploads.shein_orders"), upload_shein_orders_path, class: 'nav-link' %>
-          </li>
-          <li class="<%= active_nav_item('customers', 'index') %>">
-            <%= link_to t("uploads.finance"), upload_finance_data_path, class: 'nav-link' %>
-          </li>
-        <% end %>
-        
-        <% if account_policy_enabled? %>
+
+        <% if feature_enabled?(:finance) %>
           <li class="menu-header">Estimativas</li>
           <%= render 'shared/sidebar_dropdown', title: t("activerecord.models.revenue_estimations.other"), icon: 'fas fa-chart-line' do %>
             <li class="<%= active_nav_menu_item([revenue_estimations_path]) %>">
               <%= link_to t("activerecord.models.revenue_estimations.other"), revenue_estimations_path, class: 'nav-link' %>
             </li>
-            <li class="<%= active_nav_item('dashboards', 'revenue_target_report') %>">
-              <%= link_to t("dashboards.revenue_target_report"), dashboards_revenue_target_report_path, class: 'nav-link' %>
-            </li>
+            <% if feature_enabled?(:bling_integration) %>
+              <li class="<%= active_nav_item('dashboards', 'revenue_target_report') %>">
+                <%= link_to t("dashboards.revenue_target_report"), dashboards_revenue_target_report_path, class: 'nav-link' %>
+              </li>
+            <% end %>
           <% end %>
         <% end %>
-        
-        <!-- Add this new dropdown menu item after the "Shein" dropdown -->
-        <%= render 'shared/sidebar_dropdown', title: t("bling_module_situations.two"), icon: 'fas fa-cogs' do %>
-          <li class="<%= active_nav_item('bling_module_situations', 'index') %>">
-            <%= link_to t("bling_module_situations.list"), bling_module_situations_path, class: 'nav-link' %>
-          </li>
-          <li class="<%= active_nav_item('bling_module_situations', 'new') %>">
-            <%= link_to t("bling_module_situations.create"), new_bling_module_situation_path, class: 'nav-link' %>
-          </li>
+
+        <% if feature_enabled?(:bling_integration) %>
+          <%= render 'shared/sidebar_dropdown', title: t("bling_module_situations.two"), icon: 'fas fa-cogs' do %>
+            <li class="<%= active_nav_item('bling_module_situations', 'index') %>">
+              <%= link_to t("bling_module_situations.list"), bling_module_situations_path, class: 'nav-link' %>
+            </li>
+            <li class="<%= active_nav_item('bling_module_situations', 'new') %>">
+              <%= link_to t("bling_module_situations.create"), new_bling_module_situation_path, class: 'nav-link' %>
+            </li>
+          <% end %>
         <% end %>
       </ul>
     </aside>

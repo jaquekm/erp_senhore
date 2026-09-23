@@ -1,4 +1,5 @@
 class RevenueEstimationsController < ApplicationController
+  requires_feature :finance
   inherit_resources
 
   private

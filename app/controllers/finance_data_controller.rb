@@ -1,4 +1,5 @@
 class FinanceDataController < ApplicationController
+  requires_feature :finance
   before_action :set_finance_data, only: [:show, :edit, :update, :destroy]
 
   def index

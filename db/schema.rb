@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_09_03_193444) do
+ActiveRecord::Schema[7.2].define(version: 2025_01_15_000006) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -21,6 +21,20 @@ ActiveRecord::Schema[7.0].define(version: 2024_09_03_193444) do
     t.boolean "is_enabled", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["account_id", "feature_id"], name: "index_account_features_on_account_id_and_feature_id", unique: true
+  end
+
+  create_table "account_sessions", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.bigint "user_id", null: false
+    t.string "session_id", null: false
+    t.datetime "last_active_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id", "last_active_at"], name: "index_account_sessions_on_account_id_and_last_active_at"
+    t.index ["account_id"], name: "index_account_sessions_on_account_id"
+    t.index ["session_id"], name: "index_account_sessions_on_session_id", unique: true
+    t.index ["user_id"], name: "index_account_sessions_on_user_id"
   end
 
   create_table "accounts", force: :cascade do |t|
@@ -28,6 +42,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_09_03_193444) do
     t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "max_users", default: 1, null: false
+    t.integer "max_concurrent_sessions", default: 1, null: false
     t.index ["user_id"], name: "index_accounts_on_user_id"
   end
 
@@ -59,6 +75,30 @@ ActiveRecord::Schema[7.0].define(version: 2024_09_03_193444) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "admin_users", force: :cascade do |t|
+    t.string "name", default: "", null: false
+    t.string "email", default: "", null: false
+    t.string "encrypted_password", default: "", null: false
+    t.string "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_admin_users_on_email", unique: true
+    t.index ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
+  end
+
+  create_table "balances", force: :cascade do |t|
+    t.bigint "deposit_id", null: false
+    t.integer "physical_balance", null: false
+    t.integer "virtual_balance", null: false
+    t.bigint "stock_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["stock_id", "deposit_id"], name: "index_balances_on_stock_id_and_deposit_id", unique: true
+    t.index ["stock_id"], name: "index_balances_on_stock_id"
+  end
+
   create_table "bling_data", force: :cascade do |t|
     t.string "access_token"
     t.integer "expires_in"
@@ -70,6 +110,17 @@ ActiveRecord::Schema[7.0].define(version: 2024_09_03_193444) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["account_id"], name: "index_bling_data_on_account_id"
+  end
+
+  create_table "bling_module_situations", force: :cascade do |t|
+    t.integer "situation_id", null: false
+    t.string "name", null: false
+    t.integer "inherited_id"
+    t.string "color"
+    t.integer "module_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["situation_id"], name: "index_bling_module_situations_on_situation_id", unique: true
   end
 
   create_table "bling_order_items", force: :cascade do |t|
@@ -97,6 +148,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_09_03_193444) do
     t.string "original_situation_id"
     t.index ["account_id"], name: "index_bling_order_items_on_account_id"
     t.index ["bling_order_id"], name: "index_bling_order_items_on_bling_order_id", unique: true
+    t.index ["date"], name: "index_bling_order_items_on_date"
   end
 
   create_table "categories", force: :cascade do |t|
@@ -253,6 +305,9 @@ ActiveRecord::Schema[7.0].define(version: 2024_09_03_193444) do
     t.bigint "bling_order_item_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "resolved", default: false
+    t.index ["resolved"], name: "index_items_on_resolved"
+    t.index ["sku"], name: "index_items_on_sku"
   end
 
   create_table "localizations", force: :cascade do |t|
@@ -269,6 +324,15 @@ ActiveRecord::Schema[7.0].define(version: 2024_09_03_193444) do
     t.bigint "bling_order_item_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "payments", force: :cascade do |t|
+    t.decimal "amount"
+    t.date "payment_date"
+    t.bigint "production_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["production_id"], name: "index_payments_on_production_id"
   end
 
   create_table "post_data", force: :cascade do |t|
@@ -291,6 +355,13 @@ ActiveRecord::Schema[7.0].define(version: 2024_09_03_193444) do
     t.datetime "updated_at", null: false
     t.integer "pieces_delivered"
     t.date "delivery_date"
+    t.integer "dirty", default: 0
+    t.integer "error", default: 0
+    t.integer "discard", default: 0
+    t.decimal "unit_price", precision: 10, scale: 2
+    t.decimal "total_price", precision: 10, scale: 2
+    t.boolean "returned", default: false
+    t.integer "lost_pieces", default: 0
     t.index ["product_id"], name: "index_production_products_on_product_id"
     t.index ["production_id"], name: "index_production_products_on_production_id"
   end
@@ -308,7 +379,11 @@ ActiveRecord::Schema[7.0].define(version: 2024_09_03_193444) do
     t.boolean "paid"
     t.text "observation"
     t.string "service_order_number"
+    t.decimal "notions_cost", precision: 10, scale: 2
+    t.decimal "fabric_cost", precision: 10, scale: 2
+    t.date "payment_date"
     t.index ["account_id"], name: "index_productions_on_account_id"
+    t.index ["confirmed"], name: "index_productions_on_confirmed"
     t.index ["cut_date"], name: "index_productions_on_cut_date"
     t.index ["expected_delivery_date"], name: "index_productions_on_expected_delivery_date"
     t.index ["tailor_id"], name: "index_productions_on_tailor_id"
@@ -329,6 +404,10 @@ ActiveRecord::Schema[7.0].define(version: 2024_09_03_193444) do
     t.integer "account_id"
     t.integer "store_id"
     t.bigint "bling_id"
+    t.integer "number_of_pieces_per_fabric_roll"
+    t.string "tipo_estoque"
+    t.string "lancamento_estoque"
+    t.jsonb "componentes"
     t.index ["account_id"], name: "index_products_on_account_id"
     t.index ["category_id"], name: "index_products_on_category_id"
   end
@@ -476,6 +555,9 @@ ActiveRecord::Schema[7.0].define(version: 2024_09_03_193444) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "account_id"
+    t.string "discounted_warehouse_sku_id"
+    t.index ["account_id"], name: "index_stocks_on_account_id"
+    t.index ["product_id"], name: "index_stocks_on_product_id"
   end
 
   create_table "stores", force: :cascade do |t|
@@ -527,15 +609,36 @@ ActiveRecord::Schema[7.0].define(version: 2024_09_03_193444) do
     t.string "company_name"
     t.string "cpf_cnpj"
     t.string "phone"
+    t.bigint "account_id"
+    t.integer "role", default: 0, null: false
+    t.boolean "active", default: true, null: false
+    t.index ["account_id"], name: "index_users_on_account_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  create_table "warehouses", force: :cascade do |t|
+    t.string "bling_id", null: false
+    t.string "description", null: false
+    t.integer "status", default: 1, null: false
+    t.boolean "is_default", default: false, null: false
+    t.boolean "ignore_balance", default: false, null: false
+    t.integer "account_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["bling_id", "account_id"], name: "index_warehouses_on_bling_id_and_account_id", unique: true
+    t.index ["status"], name: "index_warehouses_on_status"
+  end
+
+  add_foreign_key "account_sessions", "accounts"
+  add_foreign_key "account_sessions", "users"
   add_foreign_key "accounts", "users"
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "balances", "stocks"
   add_foreign_key "group_products", "groups"
   add_foreign_key "group_products", "products"
+  add_foreign_key "payments", "productions"
   add_foreign_key "production_products", "productions"
   add_foreign_key "production_products", "products"
   add_foreign_key "productions", "accounts"
@@ -549,4 +652,5 @@ ActiveRecord::Schema[7.0].define(version: 2024_09_03_193444) do
   add_foreign_key "sales", "customers"
   add_foreign_key "simplo_items", "products"
   add_foreign_key "simplo_items", "simplo_orders"
+  add_foreign_key "users", "accounts"
 end

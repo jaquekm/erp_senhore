@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class CategoriesController < ApplicationController
+  requires_feature :stock
   before_action :set_category, only: %i[show edit update destroy]
   include Pagy::Backend
   include ActionView::RecordIdentifier

@@ -1,5 +1,5 @@
 {
-  "name": "purple_stock",
+  "name": "jkode-sistemas",
   "private": true,
   "scripts": {
     "build": "webpack --config webpack.config.js"

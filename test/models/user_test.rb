@@ -5,6 +5,7 @@
 # Table name: users
 #
 #  id                     :bigint           not null, primary key
+#  active                 :boolean          default(TRUE), not null
 #  company_name           :string
 #  cpf_cnpj               :string
 #  email                  :string           default(""), not null
@@ -15,13 +16,20 @@
 #  remember_created_at    :datetime
 #  reset_password_sent_at :datetime
 #  reset_password_token   :string
+#  role                   :integer          default("owner"), not null
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
+#  account_id             :bigint
 #
 # Indexes
 #
+#  index_users_on_account_id            (account_id)
 #  index_users_on_email                 (email) UNIQUE
 #  index_users_on_reset_password_token  (reset_password_token) UNIQUE
+#
+# Foreign Keys
+#
+#  fk_rails_...  (account_id => accounts.id)
 #
 require 'test_helper'
 

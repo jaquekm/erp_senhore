@@ -8,6 +8,9 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
+Rails.logger.debug 'ERP modules (Feature master data)'
+Feature.sync_master_data!
+
 Rails.logger.debug 'Module User'
 
 user = FactoryBot.create(:user, password: '123456', email: 'fashion.store@email.com')
@@ -18,11 +21,7 @@ FactoryBot.create(:bling_datum, account_id: 1, expires_at: (Time.zone.now + 3.da
 
 Rails.logger.debug 'Flag first account with bling feature'
 
-feature = FactoryBot.create(:feature, feature_key: FeatureKey::BLING_INTEGRATION, is_enabled: true)
-
-user.account.features << feature
-
-user.account.account_features.first.update(is_enabled: true)
+Services::AccountFeatureToggler.call(account: user.account, feature_key: :bling_integration, enabled: true)
 
 Rails.logger.debug 'Categories'
 50.times { FactoryBot.create(:category, name: Faker::Lorem.word) }

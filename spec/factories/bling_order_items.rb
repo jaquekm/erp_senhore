@@ -30,6 +30,7 @@
 #
 #  index_bling_order_items_on_account_id      (account_id)
 #  index_bling_order_items_on_bling_order_id  (bling_order_id) UNIQUE
+#  index_bling_order_items_on_date            (date)
 #
 FactoryBot.define do
   factory :bling_order_item do

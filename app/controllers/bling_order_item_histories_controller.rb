@@ -3,6 +3,7 @@
 # There is a necessity to know the revenue from the last 15 days
 # In order to take better commercial decisions.
 class BlingOrderItemHistoriesController < ApplicationController
+  requires_feature :bling_integration
   before_action :date_range, :paid_bling_order_items, :day_quantities_presenter,
                 only: %i[day_quantities]
   before_action :daily_revenue, :canceled_revenue, only: :index

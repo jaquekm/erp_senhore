@@ -9,6 +9,10 @@
 #  account_id :bigint           not null
 #  feature_id :integer          not null
 #
+# Indexes
+#
+#  index_account_features_on_account_id_and_feature_id  (account_id,feature_id) UNIQUE
+#
 FactoryBot.define do
   factory :account_feature do
     account_id { 1 }

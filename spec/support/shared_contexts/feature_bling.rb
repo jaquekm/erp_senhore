@@ -1,10 +1,7 @@
 require 'spec_helper'
 
 shared_context 'with bling feature' do
-  let(:feature_bling) { FactoryBot.create(:feature, feature_key: FeatureKey::BLING_INTEGRATION, is_enabled: true) }
-
   before do
-    user.account.features << feature_bling
-    user.account.account_features.first.update(is_enabled: true)
+    Services::AccountFeatureToggler.call(account: user.account, feature_key: :bling_integration, enabled: true)
   end
 end
