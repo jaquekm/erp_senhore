@@ -43,6 +43,13 @@
   vertical-align: middle;
 }
 
+/* Stisla's .page-item .page-link rule sets purple text on every page link,
+   but only the active page also gets a purple background -- without this,
+   the current page number is purple text on a purple square (invisible). */
+.page-item.active .page-link {
+  color: #fff;
+}
+
 a[data-target='infinite-page.more'] {
   display: none;
 }

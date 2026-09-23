@@ -8,12 +8,6 @@
     </form>
     <ul class="navbar-nav navbar-right">
       <li class="dropdown">
-        <%= form_tag set_locale_path, method: :get, id: 'set_locale', class: 'me-2' do %>
-          <%= select_tag :locale, options_for_select(I18n.available_locales.map{ |locale| [ t('language_name', locale: locale), locale.to_s]}), 
-          {class: "form-select", prompt: t('select_idiom'), onchange: "this.form.submit()", id: 'set_locale'} %>
-        <% end %>
-      </li>
-      <li class="dropdown">
         <a href="#" data-bs-toggle="dropdown" class="nav-link dropdown-toggle nav-link-lg nav-link-user">
           <%= image_tag('avatar/avatar-1.png', alt: 'user', class: 'rounded-circle me-1') %>
           <div class="d-none d-lg-inline-block">Olá, <%= current_user.email %></div>
@@ -26,6 +20,14 @@
           <li><%= link_to integrations_list_path, class: "dropdown-item has-icon" do %>
             <i class="fas fa-cogs"></i> Integrações
           <% end %></li>
+          <li><hr class="dropdown-divider"></li>
+          <li class="px-3 py-1">
+            <%= form_tag set_locale_path, method: :get, id: 'set_locale' do %>
+              <%= label_tag :locale, t('select_idiom'), class: 'mb-1 text-muted small' %>
+              <%= select_tag :locale, options_for_select(I18n.available_locales.map{ |locale| [ t('language_name', locale: locale), locale.to_s]}, I18n.locale.to_s),
+              {class: "form-select form-select-sm", onchange: "this.form.submit()", id: 'set_locale'} %>
+            <% end %>
+          </li>
           <li><hr class="dropdown-divider"></li>
           <li><%= link_to destroy_user_session_path, method: :delete, class: 'dropdown-item has-icon text-danger', data: { turbo_method: :delete } do %>
             <i class="fas fa-sign-out-alt"></i> Sair
